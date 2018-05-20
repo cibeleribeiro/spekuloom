@@ -4,27 +4,49 @@ from nltk.book import text2
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
+from util import Mont
 
 
 class Clauses:
     def __init__(self):
-        self.text = ' '.join(text2[400:900])
+        self.text = text = ' '.join(text2[400:900])
         self.token = self.punct = self.clauses = ''
-        self.punctuation = list(",.:;!?")+["CC", "IN", "--"]
-        print(self.punctuation)
-        # self.split_clauses()
-        self.plot_clause('a')
+        self.punctuation = list(",.:;!?")+["CC", "--"]
+        punctuation = list(",.:;!?-")
+        # print(self.punctuation)
+        for pt in punctuation:
+            text = text.replace(" {} ".format(pt), "{} ".format(pt))
+        text = text.replace("--", u"\u2014")
+        text = text.replace("- ", "-")
+        text = text.replace(" ' ", "'")
+        text = text.replace("Mr.", "Mrp")
+        self.text = text
+        self.split_clauses()
+        # self.plot_clause('a')
+        self.classes = Mont().mont_symbol()
+        self.marker()
+
+    def marker(self):
+        print(self.text)
+        _ = [self.mark_clauses(clause) for clause in self.clauses[:50]]
+
+    def mark_clauses(self, clause):
+        NO = self.classes["ZZ"]
+        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else NO) + wd for wd, tag in clause]
+        # mak_claus = [tag + wd for wd, tag in clause]
+        print(' '.join(mak_claus))
 
     def split_clauses(self):
         token = word_tokenize(self.text)
-        self.token = nltk.pos_tag(token)
+        self.token = token = nltk.pos_tag(token)
         punctuation=",.:;!?CCIN--"
         # self.punct = [(index, punct) for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         self.punct = pun= [index for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         hist = [(punct, sum(1 for x, p in self.token if punct == p))
                 for punct in self.punctuation]
-        self.clauses = [self.token[start: stop] for start, stop in zip([0]+pun, pun[1:])]
-        print(self.clauses)
+        self.clauses = [token[start + (0 if token[start][1] == "CC" else 1): stop]+[self.token[stop]]
+                        for start, stop in list(zip(pun, pun[1:])) if stop > (start+1)]
+        # print(self.clauses)
 
     def plot_clause(self, a_clause):
         fig = plt.figure()
