@@ -1,3 +1,5 @@
+import operator
+
 import nltk
 from nltk import *
 from nltk.book import text2
@@ -9,7 +11,7 @@ from util import Mont
 
 class Clauses:
     def __init__(self):
-        self.text = text = ' '.join(text2[400:900])
+        self.text = text = ' '.join(text2[400:1500])
         self.token = self.punct = self.clauses = ''
         self.punctuation = list(",.:;!?")+["CC", "--"]
         punctuation = list(",.:;!?-")
@@ -24,11 +26,23 @@ class Clauses:
         self.split_clauses()
         # self.plot_clause('a')
         self.classes = Mont().mont_symbol()
-        self.marker()
+        # self.marker()
+        self.survey_patterns()
+
+    def survey_patterns(self):
+        def window(clause):
+            return zip(clause, clause[1:], clause[2:])
+        patterns = [(a, b, c) for a_clause in self.clauses for (_, a), (_, b), (_, c) in window(a_clause)]
+        self.patterns = {}
+        for pat in patterns:
+            self.patterns[pat] = self.patterns.setdefault(pat, 0)+1
+        print(sorted(self.patterns.items(), key=operator.itemgetter(1), reverse=True))
+        # print(self.patterns)
+
 
     def marker(self):
         print(self.text)
-        _ = [self.mark_clauses(clause) for clause in self.clauses[:50]]
+        _ = [self.mark_clauses(clause) for clause in self.clauses[:200]]
 
     def mark_clauses(self, clause):
         NO = self.classes["ZZ"]
