@@ -2,12 +2,52 @@
 #from nltk import *
 #from nltk.book import *
 #from spekuloom.word_class import tagset
+import mechanicalsoup
+from mechanicalsoup import LinkNotFoundError
+from time import sleep
+
 
 class Mont:
     def __init__(self):
         #self.text = text2
         #self.word_classes()
-        self.mont_symbol()
+        #self.mont_symbol()
+
+        browser = mechanicalsoup.StatefulBrowser()
+        browser.open("https://www.gutenberg.org/wiki/Children%27s_Anthologies_(Bookshelf)")
+        cats = [ln for ln in browser.links(url_regex='.*www.gutenberg.org/ebooks/.*')]
+        for vol, _link in enumerate(cats):
+            print("browser.follow_link", _link.text, _link.attrs['href'])
+            filename = _link.text
+            try:
+                browser.follow_link(_link)
+                # pg = browser.get_current_page()
+                # [print(">>>sub browser.a", a) for a in pg.find_all('a')]
+                sub_link = '.*//www.gutenberg.org/ebooks/.*.txt.utf-8'
+                sub_cats = [ln.attrs['href'] for ln in browser.links(url_regex=sub_link)]
+                [print(">>>sub browser.link", ct) for ct in sub_cats]
+                # browser.follow_link(sub_cats[0])
+                # print(browser.get('https:'+sub_cats[0]).content)
+                bk = open('/opt/iso/books/Bk{:03}_{}'.format(vol, filename), 'w')
+                content = browser.get('https:'+sub_cats[0]).content
+                bk.write(bytearray(content).decode("utf-8"))
+                # bk.write(bytearray(content.encode("UTF8"))).decode("utf-8")
+                bk.close()
+                sleep(100)
+            except LinkNotFoundError:
+                pass
+        #sub_cats = {ct: '' if print(ct) else browser.follow_link(ct) for ct in cats}
+
+        #print(sub_cats)
+
+        # Fill-in the search form
+        # browser.select_form('#search_form_homepage')
+        # browser["q"] = "MechanicalSoup"
+        # browser.submit_selected()
+
+        # Display the results
+        # for link in browser.get_current_page().find_all('a'):
+        #     print(link.text, '->') # , link.attrs['href'])
 
     def word_classes(self):
         print(tagset)
