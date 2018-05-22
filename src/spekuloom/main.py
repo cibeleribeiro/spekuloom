@@ -7,7 +7,7 @@ import numpy as np
 from nltk import *
 from nltk.book import *
 from scipy.interpolate import spline
-from util import Mont
+import util
 
 #
 '''
@@ -39,11 +39,11 @@ PATTERNS = 400
 CNT_CUT = 5
 FACTOR = 10
 '''
-WINDOW = 5
+WINDOW = 4
 COUNT_MIN = -2
 COUNT_MAX = 100
 PATTERNS = 400
-CNT_CUT = 5
+CNT_CUT = 10
 FACTOR = 10
 
 
@@ -52,14 +52,19 @@ class Clauses:
         self.token = self.punct = self.clauses = self.patterns = ''
         self.punctuation = list(",.:;!?") + ["CC", "--"]
         self.punctuate = list(",.:;!?-")
-        _text = self.text_setup(text5)
-        self.split_clauses(_text)
+        # _text = self.text_setup(text5)
+        # self.split_clauses(_text)
         # self.plot_clause('a')
-        self.classes = Mont().mont_symbol()
+        self.classes = util.Mont().mont_symbol()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         # self.marker()
-        self.survey_corpora()
+        # self.survey_corpora()
         # self.survey_patterns()
+
+    def mark_text(self, text):
+        _text = self.text_setup(text)
+        _clauses = self.split_clauses(_text)
+        self.marker(_clauses)
 
     def text_setup(self, text):
         text = ' '.join(text[500:8500])
@@ -135,57 +140,29 @@ class Clauses:
         # print(self.patterns)
         return sorted_pattern
 
-    def marker(self):
-        print(self.text)
-        _ = [self.mark_clauses(clause) for clause in self.clauses[:200]]
+    def marker(self, clauses=None, clip=200):
+        # print(self.text)
+        clauses = clauses if clauses else self.clauses
+        _ = [self.mark_clauses(clause) for clause in clauses[:clip]]
 
     def mark_clauses(self, clause):
-        NO = self.classes["ZZ"]
-        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else NO) + wd for wd, tag in clause]
+        no = self.classes["ZZ"]
+        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
         # mak_claus = [tag + wd for wd, tag in clause]
         print(' '.join(mak_claus))
 
     def split_clauses(self, text):
         token = word_tokenize(text)
         self.token = token = nltk.pos_tag(token)
-        punctuation = ",.:;!?CCIN--"
-        # self.punct = [(index, punct) for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         self.punct = pun = [index for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
-        hist = [(punct, sum(1 for x, p in self.token if punct == p))
-                for punct in self.punctuation]
+        # hist = [(punct, sum(1 for x, p in self.token if punct == p))
+        #         for punct in self.punctuation]
         self.clauses = [token[start + (0 if token[start][1] == "CC" else 1): stop] + [self.token[stop]]
                         for start, stop in list(zip(pun, pun[1:])) if stop > (start + 1)]
         return self.clauses
 
-    def plot_clause(self, a_clause):
-        fig = plt.figure()
-        fig.suptitle('bold figure subtitle', fontsize=14, fontweight='bold')
-
-        ax = fig.add_subplot(111)
-        fig.subplots_adjust(top=0.85)
-        ax.set_title('axes title')
-
-        ax.set_xlabel('xlabel')
-        ax.set_ylabel('ylabel')
-
-        N = 100
-        r0 = 0.6
-        x = 0.9 * np.random.rand(N)
-        y = 0.9 * np.random.rand(N)
-        area = (20 * np.random.rand(N)) ** 2  # 0 to 10 point radii
-        c = np.sqrt(area)
-        r = np.sqrt(x * x + y * y)
-        area1 = np.ma.masked_where(r < r0, area)
-        area2 = np.ma.masked_where(r >= r0, area)
-        plt.scatter(x, y, s=area1, marker='^', c=c)
-        plt.scatter(x, y, s=area2, marker='o', c=c)
-        # Show the boundary between the regions:
-        # theta = np.arange(0, np.pi / 2, 0.01)
-        # plt.plot(r0 * np.cos(theta), r0 * np.sin(theta))
-
-        plt.show()
-
     def plot_patterns(self, patt, labels):
+        _ = self.punct
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
 
@@ -217,7 +194,8 @@ class Clauses:
         plt.show()
 
 
-Clauses()
+if __name__ == '__main__':
+    Clauses().mark_text(text5)
 
 """
 Noun 	black tri l
