@@ -57,7 +57,7 @@ class Clauses:
         # self.plot_clause('a')
         self.classes = util.Mont().mont_symbol()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
-        # self.marker()
+        self.marker()
         # self.survey_corpora()
         # self.survey_patterns()
 
@@ -74,6 +74,7 @@ class Clauses:
         text = text.replace("- ", "-")
         text = text.replace(" ' ", "'")
         text = text.replace("Mr.", "Mrp")
+        text = text.replace("", "")
         return text
 
     def survey_corpora(self, wind=WINDOW):
@@ -113,7 +114,7 @@ class Clauses:
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
         corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
-        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / corp_avg[ind] for _x in _xpat],
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind]+0.00001) for _x in _xpat],
                  marks[ind]) for ind in _ntexts]
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
@@ -195,7 +196,8 @@ class Clauses:
 
 
 if __name__ == '__main__':
-    Clauses().mark_text(text5)
+    # Clauses().mark_text(text5)
+    Clauses().survey_corpora(4)
 
 """
 Noun 	black tri l
