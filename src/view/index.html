@@ -12,15 +12,23 @@
     <!-- Bulma Version 0.7.1-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css" />
     <link rel="stylesheet" type="text/css" href="../css/landing.css">
+<script>
+    function close(){
+        var NAME = document.getElementById("the_modal");
+        NAME.classList.toggle('is-active');}
+</script>
 </head>
 
 <body>
-    <div class="modal is-active">
-        <div class="modal-background"></div>
+    <div id="the_modal" class="modal is-active" onclick="close()">
+        <div class="modal-background">
+                <img src="/_static/book-863418_1280.jpg" onclick="close()"/>
+        </div>
             <div class="modal-content">
-                <img src="/_static/flowRoot3765.png"/>
+                <img src="/_static/flowRoot3765.png" onclick="close()"/>
             </div>
             <button class="modal-close is-large" aria-label="close"></button>
+
     </div>
     <section class="hero is-info is-fullheight">
         <div class="hero-head">
