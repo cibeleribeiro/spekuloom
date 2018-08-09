@@ -7,9 +7,8 @@ bottle.TEMPLATE_PATH.insert(0, bananas_path)
 img_dir = os.path.join(base_path, '_static')
 css_dir = os.path.join(base_path,'view/css' )
 @route('/')
-@view('splash')
-def splash():
-    return {}
+
+
 @view('index')
 def index():
     #return template('<b>Hello {{name}}</b>!', name=name)
