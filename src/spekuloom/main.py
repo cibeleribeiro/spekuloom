@@ -60,7 +60,7 @@ class Clauses:
         # _text = self.text_setup(text5)
         # self.split_clauses(_text)
         # self.plot_clause('a')
-        self.classes = util.Mont().mont_symbol()
+        self.classes = util.Mont().mont_symbol_pt()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
         self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
@@ -161,8 +161,8 @@ class Clauses:
     def mark_clauses(self, clause):
         no = self.classes["ZZ"]
         # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
-        # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
-        mak_claus = [tag + wd for wd, tag in clause]
+        mak_claus = [(self.classes[tag[:3]] if tag[:3] in self.classes else no) + wd for wd, tag in clause]
+        # mak_claus = [tag + wd for wd, tag in clause]
         print(' '.join(mak_claus))
 
     def split_clauses(self, text):
