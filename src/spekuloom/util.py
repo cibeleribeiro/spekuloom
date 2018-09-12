@@ -3,10 +3,10 @@
 # from nltk.book import *
 # from spekuloom.word_class import tagset
 from time import sleep
-
+from os import walk
 import mechanicalsoup
 from mechanicalsoup import LinkNotFoundError
-
+LIVROS = '/opt/iso/livros/livros/'
 
 class Mont:
     def __init__(self):
@@ -57,6 +57,14 @@ class Mont:
         # for link in browser.get_current_page().find_all('a'):
         #     print(link.text, '->') # , link.attrs['href'])
 
+    def carrega_livros(self):
+
+        f = []
+        for (dirpath, dirnames, filenames) in walk(LIVROS):
+            f.extend(filenames)
+            break
+        print(f)
+
     def load_books(self):
         browser = mechanicalsoup.StatefulBrowser()
         browser.open("https://www.gutenberg.org/wiki/Children%27s_Anthologies_(Bookshelf)")
@@ -104,5 +112,5 @@ class Mont:
 
 
 if __name__ == '__main__':
-    b = Mont().load_books()
-    [print(t, c[10000: 10100]) for t, c in b.items()]
+    b = Mont().carrega_livros()
+    # [print(t, c[10000: 10100]) for t, c in b.items()]
