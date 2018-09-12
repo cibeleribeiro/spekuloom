@@ -5,9 +5,14 @@ import matplotlib.pyplot as plt
 import nltk
 import numpy as np
 from nltk import *
-from nltk.book import *
+# from nltk.book import *
+# from nltk.examples.pt import *
+from nltk.corpus import machado
 from scipy.interpolate import spline
 import util
+import pickle
+from nltk import BrillTagger
+tagger = pickle.load(open("tagger.pkl", "rb"))
 
 #
 '''
@@ -58,8 +63,12 @@ class Clauses:
         self.classes = util.Mont().mont_symbol()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
+        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
         # self.survey_corpora()
         # self.survey_patterns()
+
+    def mark_text_ind(self, text):
+        self.mark_text(self.texts[text])
 
     def mark_text(self, text):
         _text = self.text_setup(text)
@@ -82,7 +91,10 @@ class Clauses:
         dcorpora = {}
         lcorpora = []
         cp = PATTERNS
-        _texts = [text1, text2, text3, text6, text7, text8, text9]
+        # _texts = [text1, text2, text3, text6, text7, text8, text9]
+        _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        print([t[10000:10020] for t in _text])
+        return
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
@@ -148,13 +160,15 @@ class Clauses:
 
     def mark_clauses(self, clause):
         no = self.classes["ZZ"]
-        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
-        # mak_claus = [tag + wd for wd, tag in clause]
+        # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
+        # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
+        mak_claus = [tag + wd for wd, tag in clause]
         print(' '.join(mak_claus))
 
     def split_clauses(self, text):
-        token = word_tokenize(text)
-        self.token = token = nltk.pos_tag(token)
+        token = word_tokenize(text, language='portuguese')
+        self.token = token = tagger.tag(token)
+        # self.token = token = nltk.pos_tag(token)
         self.punct = pun = [index for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         # hist = [(punct, sum(1 for x, p in self.token if punct == p))
         #         for punct in self.punctuation]
@@ -196,8 +210,8 @@ class Clauses:
 
 
 if __name__ == '__main__':
-    # Clauses().mark_text(text5)
-    Clauses().survey_corpora(4)
+    Clauses().mark_text_ind(5)
+    # Clauses().survey_corpora(4)
 
 """
 Noun 	black tri l
