@@ -138,3 +138,24 @@ WRB: Wh-adverb
 ``: opening quotation mark
 '''
 tagset = [line for line in txt.split("\n")if ":" in line]
+
+#NN = noun/ big black triangle
+#DT = article/ small light blue triangle
+#JJ = adjective/ big half dark blue triangle
+#VB = verb/ big red circle
+#MD = modal auxiliary/ big polkadot red circle
+#RB = adverb / big "orange"(red lined) circle
+#IN = preposition, subordinative conjunction / green half moon
+#CC = Coordinating conjunction / light purple rectangle
+#UH = interjection / yellow diamond
+#PR = pronoun / purple arrow to the right
+#ZZ = tem relação co : ?
+#WD = Wh words+that determiner/ vertical lined light blue square
+#WP = Wh words+that pronoun/ cross green square
+#WR = Wh words+that adverb / diagonal left to right light red square
+#TO = preposition or infinitive marker / diagonal right to left light green square
+#RP = particle / diagonal cross light purple square
+#PD = Pre-determiner /up left quadrant light blue square
+#PO = genitive 's /low left quadrant gray square
+#EX  = existencial there/ low right quadrant yellow square
+#CD = cardinal number / up right quadrant light blue square
