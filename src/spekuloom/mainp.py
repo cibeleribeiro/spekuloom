@@ -51,10 +51,12 @@ COUNT_MAX = 100
 PATTERNS = 400
 CNT_CUT = 10
 FACTOR = 10
+GEN_CNT = 2
 
 
 class Clauses:
     def __init__(self):
+        classes = "contos critica cronica miscelanea poesia romance teatro".split()
         self.token = self.punct = self.clauses = self.patterns = ''
         self.punctuation = list(",.:;!?") + ["CC", "--"]
         self.punctuate = list(",.:;!?-")
@@ -64,7 +66,17 @@ class Clauses:
         self.classes = util.Mont().mont_symbol_pt()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
-        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto][:20]
+        self.gens = {gen: [machado.words(txid) for txid in machado.fileids() if gen in txid] for gen in classes}
+        self.texts = []
+        self.legends = []
+        for gen in classes:
+            self.legends.extend([gen]*GEN_CNT)
+            self.texts.extend([tx for tx in self.gens[gen]][:GEN_CNT])
+        # self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto][:20]
+        for txt in self.texts:
+            print(txt[1000:1004])
+        # for fid in machado.fileids():
+        #     print(fid)
         # self.survey_corpora()
         # self.survey_patterns()
 
@@ -93,7 +105,8 @@ class Clauses:
         lcorpora = []
         cp = PATTERNS
         # _texts = [text1, text2, text3, text6, text7, text8, text9]
-        _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        _texts = self.texts
+        # _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
         print([t[1000:1002] for t in _texts])
         # return
         _ntexts = range(len(_texts))
@@ -124,6 +137,7 @@ class Clauses:
         for sp, c in sorted_pattern[0][:cp]:
             print("sp : {} {}\n".format(sp, c))
         marks = 'rs gs bs ms c^ yv k. w* c^'.split()
+        marks *= 5
         _xpat = list(k for k, _ in sorted_pattern[0][:cp])
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
         corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if _xpat}
@@ -133,7 +147,17 @@ class Clauses:
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
         print(list(avp.values()))
-        self.plot_patterns(patt, labels)
+        # self.plot_patterns(patt, labels)
+        self.check_deviation(patt)
+
+    def check_deviation(self, patt):
+        from statistics import stdev
+        _patt = list(zip(*patt))[1]
+        results = [stdev(pat) for pat in zip(*_patt)]
+        print([(i,d) for i, d in enumerate(results) if 12 < d])
+        plt.plot(results)
+        plt.show()
+
 
     def survey_patterns(self, wind=5):
         def to_shapes(shapes):
@@ -179,6 +203,9 @@ class Clauses:
         return self.clauses
 
     def plot_patterns(self, patt, labels):
+        from itertools import cycle
+        lines = ["-", "--", "-.", ":"]
+        linecycler = cycle(lines)
         _ = self.punct
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
@@ -206,9 +233,10 @@ class Clauses:
             x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
             # y_smooth = spline(_x, npy.log([y+0.001 for y in _y]), x_smooth)
             y_smooth = spline(_x, [y if y > COUNT_MIN else 0 for y in _y], x_smooth)
-            plt.plot(x_smooth, y_smooth)
+            plt.plot(x_smooth, y_smooth, next(linecycler))
             # plt.plot(range(len(_y)), _y, _c)
-        plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
+        plt.legend(self.legends, loc='upper right')
+        # plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
 
         plt.show()
 
