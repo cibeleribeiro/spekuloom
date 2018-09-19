@@ -87,10 +87,11 @@ class Clauses:
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
             self.split_clauses(_text)
-            dcorpora[ind] = {k: v for k, v in self.survey_patterns(wind)}
+            patterns_surveyed = self.survey_patterns(wind)
+            dcorpora[ind] = {k: v for k, v in patterns_surveyed}
 
-            corpora.extend(self.survey_patterns(wind))
-            lcorpora.append(self.survey_patterns(wind))
+            corpora.extend(patterns_surveyed)
+            lcorpora.append(patterns_surveyed)
 
         self.patterns = {}
         for pat in corpora:

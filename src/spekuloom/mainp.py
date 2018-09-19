@@ -64,7 +64,7 @@ class Clauses:
         self.classes = util.Mont().mont_symbol_pt()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
-        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto][:20]
         # self.survey_corpora()
         # self.survey_patterns()
 
@@ -77,7 +77,7 @@ class Clauses:
         self.marker(_clauses)
 
     def text_setup(self, _text):
-        _text = ' '.join(_text[500:8500])
+        _text = ' '.join(_text[500:4500])
         for pt in self.punctuate:
             _text = _text.replace(" {} ".format(pt), "{} ".format(pt))
         _text = _text.replace("--", u"\u2014")
@@ -100,10 +100,11 @@ class Clauses:
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
             self.split_clauses(_text)
-            dcorpora[ind] = {k: v for k, v in self.survey_patterns(wind)}
+            patterns_surveyed = self.survey_patterns(wind)
+            dcorpora[ind] = {k: v for k, v in patterns_surveyed}
 
-            corpora.extend(self.survey_patterns(wind))
-            lcorpora.append(self.survey_patterns(wind))
+            corpora.extend(patterns_surveyed)
+            lcorpora.append(patterns_surveyed)
 
         self.patterns = {}
         for pat in corpora:
@@ -125,7 +126,7 @@ class Clauses:
         marks = 'rs gs bs ms c^ yv k. w* c^'.split()
         _xpat = list(k for k, _ in sorted_pattern[0][:cp])
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
-        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if ind and _xpat}
+        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if _xpat}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
         patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind] + 0.00001) for _x in _xpat],
                  marks[ind]) for ind in _ntexts if ind < len(marks)]
@@ -136,7 +137,7 @@ class Clauses:
 
     def survey_patterns(self, wind=5):
         def to_shapes(shapes):
-            return "".join(self.classes.get(shape[:2], self.classes['ZZ']) for shape in shapes.split(":"))
+            return "".join(self.classes.get(shape[:3], self.classes['ZZ']) for shape in shapes.split(":"))
 
         def window(clause):
             return [":".join(x) for x in zip(*[[_tag for _, _tag in clause[ind:]] for ind in range(wind)])]
@@ -213,7 +214,7 @@ class Clauses:
 
 
 if __name__ == '__main__':
-    # Clauses().mark_text_ind(5)
+    # Clauses().mark_text_ind(6)
     Clauses().survey_corpora(4)
 
 """
