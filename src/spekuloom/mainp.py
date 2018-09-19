@@ -12,6 +12,7 @@ from scipy.interpolate import spline
 import util
 import pickle
 from nltk import BrillTagger
+
 tagger = pickle.load(open("tagger.pkl", "rb"))
 
 #
@@ -75,16 +76,16 @@ class Clauses:
         _clauses = self.split_clauses(_text)
         self.marker(_clauses)
 
-    def text_setup(self, text):
-        text = ' '.join(text[500:8500])
+    def text_setup(self, _text):
+        _text = ' '.join(_text[500:8500])
         for pt in self.punctuate:
-            text = text.replace(" {} ".format(pt), "{} ".format(pt))
-        text = text.replace("--", u"\u2014")
-        text = text.replace("- ", "-")
-        text = text.replace(" ' ", "'")
-        text = text.replace("Mr.", "Mrp")
-        text = text.replace("", "")
-        return text
+            _text = _text.replace(" {} ".format(pt), "{} ".format(pt))
+        _text = _text.replace("--", u"\u2014")
+        _text = _text.replace("- ", "-")
+        _text = _text.replace(" ' ", "'")
+        _text = _text.replace("Mr.", "Mrp")
+        _text = _text.replace("", "")
+        return _text
 
     def survey_corpora(self, wind=WINDOW):
         corpora = []
@@ -93,7 +94,7 @@ class Clauses:
         cp = PATTERNS
         # _texts = [text1, text2, text3, text6, text7, text8, text9]
         _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
-        print([t[10000:10020] for t in _texts])
+        print([t[1000:1002] for t in _texts])
         # return
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
@@ -126,7 +127,7 @@ class Clauses:
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
         corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if ind and _xpat}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
-        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind]+0.00001) for _x in _xpat],
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind] + 0.00001) for _x in _xpat],
                  marks[ind]) for ind in _ntexts if ind < len(marks)]
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)

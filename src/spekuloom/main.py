@@ -5,14 +5,9 @@ import matplotlib.pyplot as plt
 import nltk
 import numpy as np
 from nltk import *
-# from nltk.book import *
-# from nltk.examples.pt import *
-from nltk.corpus import machado
+from nltk.book import *
 from scipy.interpolate import spline
 import util
-import pickle
-from nltk import BrillTagger
-tagger = pickle.load(open("tagger.pkl", "rb"))
 
 #
 '''
@@ -60,15 +55,11 @@ class Clauses:
         # _text = self.text_setup(text5)
         # self.split_clauses(_text)
         # self.plot_clause('a')
-        self.classes = util.Mont().mont_symbol_pt()
+        self.classes = util.Mont().mont_symbol()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
-        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
         # self.survey_corpora()
         # self.survey_patterns()
-
-    def mark_text_ind(self, text):
-        self.mark_text(self.texts[text])
 
     def mark_text(self, text):
         _text = self.text_setup(text)
@@ -91,10 +82,7 @@ class Clauses:
         dcorpora = {}
         lcorpora = []
         cp = PATTERNS
-        # _texts = [text1, text2, text3, text6, text7, text8, text9]
-        _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
-        print([t[10000:10020] for t in _texts])
-        # return
+        _texts = [text1, text2, text3, text6, text7, text8, text9]
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
@@ -124,10 +112,10 @@ class Clauses:
         marks = 'rs gs bs ms c^ yv k. w* c^'.split()
         _xpat = list(k for k, _ in sorted_pattern[0][:cp])
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
-        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if ind and _xpat}
+        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
         patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind]+0.00001) for _x in _xpat],
-                 marks[ind]) for ind in _ntexts if ind < len(marks)]
+                 marks[ind]) for ind in _ntexts]
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
         print(list(avp.values()))
@@ -160,15 +148,13 @@ class Clauses:
 
     def mark_clauses(self, clause):
         no = self.classes["ZZ"]
-        # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
-        mak_claus = [(self.classes[tag[:3]] if tag[:3] in self.classes else no) + wd for wd, tag in clause]
+        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
         # mak_claus = [tag + wd for wd, tag in clause]
         print(' '.join(mak_claus))
 
     def split_clauses(self, text):
-        token = word_tokenize(text, language='portuguese')
-        self.token = token = tagger.tag(token)
-        # self.token = token = nltk.pos_tag(token)
+        token = word_tokenize(text)
+        self.token = token = nltk.pos_tag(token)
         self.punct = pun = [index for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         # hist = [(punct, sum(1 for x, p in self.token if punct == p))
         #         for punct in self.punctuation]
@@ -198,8 +184,6 @@ class Clauses:
         plt.xticks(rotation=90)
         for _x, _y, _c in patt:
             _x = list(range(len(_y)))
-            if not _x:
-                continue
             x_sm = np.array(_x)
             x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
             # y_smooth = spline(_x, npy.log([y+0.001 for y in _y]), x_smooth)
@@ -212,7 +196,7 @@ class Clauses:
 
 
 if __name__ == '__main__':
-    # Clauses().mark_text_ind(5)
+    # Clauses().mark_text(text5)
     Clauses().survey_corpora(4)
 
 """
