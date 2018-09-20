@@ -5,9 +5,15 @@ import matplotlib.pyplot as plt
 import nltk
 import numpy as np
 from nltk import *
-from nltk.book import *
+# from nltk.book import *
+# from nltk.examples.pt import *
+from nltk.corpus import machado
 from scipy.interpolate import spline
 import util
+import pickle
+from nltk import BrillTagger
+
+tagger = pickle.load(open("tagger.pkl", "rb"))
 
 #
 '''
@@ -45,44 +51,64 @@ COUNT_MAX = 100
 PATTERNS = 400
 CNT_CUT = 10
 FACTOR = 10
+GEN_CNT = 2
 
 
 class Clauses:
     def __init__(self):
+        classes = "contos critica cronica miscelanea poesia romance teatro".split()
         self.token = self.punct = self.clauses = self.patterns = ''
         self.punctuation = list(",.:;!?") + ["CC", "--"]
         self.punctuate = list(",.:;!?-")
         # _text = self.text_setup(text5)
         # self.split_clauses(_text)
         # self.plot_clause('a')
-        self.classes = util.Mont().mont_symbol()
+        self.classes = util.Mont().mont_symbol_pt()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
+        self.gens = {gen: [machado.words(txid) for txid in machado.fileids() if gen in txid] for gen in classes}
+        self.texts = []
+        self.legends = []
+        for gen in classes:
+            self.legends.extend([gen]*GEN_CNT)
+            self.texts.extend([tx for tx in self.gens[gen]][:GEN_CNT])
+        # self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto][:20]
+        for txt in self.texts:
+            print(txt[1000:1004])
+        # for fid in machado.fileids():
+        #     print(fid)
         # self.survey_corpora()
         # self.survey_patterns()
+
+    def mark_text_ind(self, text):
+        self.mark_text(self.texts[text])
 
     def mark_text(self, text):
         _text = self.text_setup(text)
         _clauses = self.split_clauses(_text)
         self.marker(_clauses)
 
-    def text_setup(self, text):
-        text = ' '.join(text[500:8500])
+    def text_setup(self, _text):
+        _text = ' '.join(_text[500:4500])
         for pt in self.punctuate:
-            text = text.replace(" {} ".format(pt), "{} ".format(pt))
-        text = text.replace("--", u"\u2014")
-        text = text.replace("- ", "-")
-        text = text.replace(" ' ", "'")
-        text = text.replace("Mr.", "Mrp")
-        text = text.replace("", "")
-        return text
+            _text = _text.replace(" {} ".format(pt), "{} ".format(pt))
+        _text = _text.replace("--", u"\u2014")
+        _text = _text.replace("- ", "-")
+        _text = _text.replace(" ' ", "'")
+        _text = _text.replace("Mr.", "Mrp")
+        _text = _text.replace("", "")
+        return _text
 
     def survey_corpora(self, wind=WINDOW):
         corpora = []
         dcorpora = {}
         lcorpora = []
         cp = PATTERNS
-        _texts = [text1, text2, text3, text6, text7, text8, text9]
+        # _texts = [text1, text2, text3, text6, text7, text8, text9]
+        _texts = self.texts
+        # _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        print([t[1000:1002] for t in _texts])
+        # return
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
@@ -111,20 +137,31 @@ class Clauses:
         for sp, c in sorted_pattern[0][:cp]:
             print("sp : {} {}\n".format(sp, c))
         marks = 'rs gs bs ms c^ yv k. w* c^'.split()
+        marks *= 5
         _xpat = list(k for k, _ in sorted_pattern[0][:cp])
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
-        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts}
+        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if _xpat}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
-        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind]+0.00001) for _x in _xpat],
-                 marks[ind]) for ind in _ntexts]
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind] + 0.00001) for _x in _xpat],
+                 marks[ind]) for ind in _ntexts if ind < len(marks)]
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
         print(list(avp.values()))
-        self.plot_patterns(patt, labels)
+        # self.plot_patterns(patt, labels)
+        self.check_deviation(patt)
+
+    def check_deviation(self, patt):
+        from statistics import stdev
+        _patt = list(zip(*patt))[1]
+        results = [stdev(pat) for pat in zip(*_patt)]
+        print([(i,d) for i, d in enumerate(results) if 12 < d])
+        plt.plot(results)
+        plt.show()
+
 
     def survey_patterns(self, wind=5):
         def to_shapes(shapes):
-            return "".join(self.classes.get(shape[:2], self.classes['ZZ']) for shape in shapes.split(":"))
+            return "".join(self.classes.get(shape[:3], self.classes['ZZ']) for shape in shapes.split(":"))
 
         def window(clause):
             return [":".join(x) for x in zip(*[[_tag for _, _tag in clause[ind:]] for ind in range(wind)])]
@@ -149,13 +186,15 @@ class Clauses:
 
     def mark_clauses(self, clause):
         no = self.classes["ZZ"]
-        mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
+        # mak_claus = [(self.classes[tag[:2]] if tag[:2] in self.classes else no) + wd for wd, tag in clause]
+        mak_claus = [(self.classes[tag[:3]] if tag[:3] in self.classes else no) + wd for wd, tag in clause]
         # mak_claus = [tag + wd for wd, tag in clause]
         print(' '.join(mak_claus))
 
     def split_clauses(self, text):
-        token = word_tokenize(text)
-        self.token = token = nltk.pos_tag(token)
+        token = word_tokenize(text, language='portuguese')
+        self.token = token = tagger.tag(token)
+        # self.token = token = nltk.pos_tag(token)
         self.punct = pun = [index for index, (txt, punct) in enumerate(self.token) if punct in self.punctuation]
         # hist = [(punct, sum(1 for x, p in self.token if punct == p))
         #         for punct in self.punctuation]
@@ -164,6 +203,9 @@ class Clauses:
         return self.clauses
 
     def plot_patterns(self, patt, labels):
+        from itertools import cycle
+        lines = ["-", "--", "-.", ":"]
+        linecycler = cycle(lines)
         _ = self.punct
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
@@ -185,19 +227,22 @@ class Clauses:
         plt.xticks(rotation=90)
         for _x, _y, _c in patt:
             _x = list(range(len(_y)))
+            if not _x:
+                continue
             x_sm = np.array(_x)
             x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
             # y_smooth = spline(_x, npy.log([y+0.001 for y in _y]), x_smooth)
             y_smooth = spline(_x, [y if y > COUNT_MIN else 0 for y in _y], x_smooth)
-            plt.plot(x_smooth, y_smooth)
+            plt.plot(x_smooth, y_smooth, next(linecycler))
             # plt.plot(range(len(_y)), _y, _c)
-        plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
+        plt.legend(self.legends, loc='upper right')
+        # plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
 
         plt.show()
 
 
 if __name__ == '__main__':
-    # Clauses().mark_text(text5)
+    # Clauses().mark_text_ind(6)
     Clauses().survey_corpora(4)
 
 """
