@@ -51,7 +51,7 @@ COUNT_MAX = 100
 PATTERNS = 400
 CNT_CUT = 10
 FACTOR = 10
-GEN_CNT = 2
+GEN_CNT = 3
 
 
 class Clauses:
@@ -105,7 +105,7 @@ class Clauses:
         lcorpora = []
         cp = PATTERNS
         # _texts = [text1, text2, text3, text6, text7, text8, text9]
-        _texts = self.texts
+        _texts = self.texts[:]
         # _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
         print([t[1000:1002] for t in _texts])
         # return
@@ -147,15 +147,37 @@ class Clauses:
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
         print(list(avp.values()))
-        # self.plot_patterns(patt, labels)
-        self.check_deviation(patt)
+        filter, _means = self.check_deviation(patt)
+        _xpat = [pt for i, pt in enumerate(_xpat) if i in filter]
+        _xpmeans = zip(_xpat, _means)
+        for x, m in _xpmeans:
+            print(x, end=" ")
+            print(m, end=" ")
+        _xpmeans = zip(_xpat, _means)
+        _texts = self.texts[:]
+        _patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (_m*corp_avg[ind] + 0.00001) for _x, _m in _xpmeans],
+                 marks[ind]) for ind in _ntexts]
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (_means[ipat]*corp_avg[ind] + 0.00001)
+                         for ipat, _x in enumerate(_xpat)],
+                 marks[ind]) for ind in _ntexts if ind < len(marks)]
+        labels = [pt for i, pt in enumerate(labels) if i in filter]
+        self.plot_patterns(patt, labels)
 
     def check_deviation(self, patt):
-        from statistics import stdev
+        from statistics import stdev, variance, mean, median_high
         _patt = list(zip(*patt))[1]
-        results = [stdev(pat) for pat in zip(*_patt)]
-        print([(i,d) for i, d in enumerate(results) if 12 < d])
+        results = [10*stdev(pat)/mean(pat) for pat in zip(*_patt)]
+        varia = [variance(pat)/mean(pat) for pat in zip(*_patt)]
+        mres = mean(results)
+        fresults = [10*stdev(pat)/mean(pat) if 9 < 10*stdev(pat)/mean(pat) else 0 for pat in zip(*_patt)]
+        _filter = [i for i, d in enumerate(fresults) if d > 9]
+        _means = [mean(pat) / (100/max(pat)) for i, pat in enumerate(zip(*_patt)) if i in _filter]
+        print([(i, d) for i, d in enumerate(fresults) if d > 9])
+        print(_means)
+        return _filter, _means
         plt.plot(results)
+        plt.plot(fresults)
+        plt.plot(varia)
         plt.show()
 
 
