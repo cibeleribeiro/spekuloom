@@ -47,11 +47,13 @@ FACTOR = 10
 '''
 WINDOW = 4
 COUNT_MIN = -2
-COUNT_MAX = 100
+COUNT_MAX = 20
 PATTERNS = 400
-CNT_CUT = 10
+CNT_CUT = 7.5
 FACTOR = 10
-GEN_CNT = 3
+GEN_CNT = 4
+TXT_DIR = "/home/carlo/Documentos/doc/academia/projetos/Spekuloom/"
+TXT_TYPES = "basico  intermediario  transitorio".split()
 
 
 class Clauses:
@@ -69,6 +71,8 @@ class Clauses:
         self.gens = {gen: [machado.words(txid) for txid in machado.fileids() if gen in txid] for gen in classes}
         self.texts = []
         self.legends = []
+        self._patt_data = []
+        self._patt_labels = []
         for gen in classes:
             self.legends.extend([gen]*GEN_CNT)
             self.texts.extend([tx for tx in self.gens[gen]][:GEN_CNT])
@@ -99,15 +103,52 @@ class Clauses:
         _text = _text.replace("", "")
         return _text
 
+    def add_texts(self):
+        legend = []
+        texts = []
+        for x in TXT_TYPES:
+            legend.extend([x] * GEN_CNT)
+
+        self.legends.extend(legend)
+        for textype in TXT_TYPES:
+            txt_dir = TXT_DIR + textype
+            for _, _dir, _texts in os.walk(txt_dir):
+                for _, _text in zip(range(GEN_CNT), _texts):
+                    print("_dir", txt_dir, _text)
+                    _text = open(os.path.join(txt_dir, _text), "r").read()
+                    text_words = word_tokenize(_text)
+                    texts.append(text_words)
+                break
+        return legend, texts
+
+    def save_texts(self):
+        SP = "\t"
+        lines = list()
+        lines.append(SP.join(self._patt_labels+["estilo\n"]))
+        lines.append(SP.join(["c"]*len(self._patt_labels)+["d\n"]))
+        lines.append(SP.join([""]*len(self._patt_labels)+["class\n"]))
+        _dat_ = zip(*self._patt_data)
+        _data = [SP.join(f"{dat:3<16}" for dat in line)+",{}\n".format(estilo)
+                 for estilo, line in zip(self.legends, _dat_)]
+        lines.extend(_data)
+        with open("estilo.tab", "w") as estilo:
+            estilo.writelines(lines)
+
+    def prepare_scatter(self):
+        _patt = self._patt_data
+        return [[t_patt[delta:delta+GEN_CNT]for t_patt in _patt]
+                for delta in range(0, len(self.legends), GEN_CNT)]
+
     def survey_corpora(self, wind=WINDOW):
         corpora = []
         dcorpora = {}
         lcorpora = []
         cp = PATTERNS
         # _texts = [text1, text2, text3, text6, text7, text8, text9]
+        self.legends, self.texts = self.add_texts()
         _texts = self.texts[:]
         # _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
-        print([t[1000:1002] for t in _texts])
+        print([t[500:504] for t in _texts])
         # return
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
@@ -155,13 +196,18 @@ class Clauses:
             print(m, end=" ")
         _xpmeans = zip(_xpat, _means)
         _texts = self.texts[:]
-        _patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (_m*corp_avg[ind] + 0.00001) for _x, _m in _xpmeans],
-                 marks[ind]) for ind in _ntexts]
+        _patt_data = [[FACTOR * dcorpora[ind].setdefault(_x, 0) / (_m*corp_avg[ind] + 0.00001) for _x, _m in _xpmeans]
+                      for ind in _ntexts]
+        self._patt_data = [[FACTOR * dcorpora[ind].setdefault(_x, 0) / (_means[ipat]*corp_avg[ind] + 0.00001)
+                            for ipat, _x in enumerate(_xpat)] for ind in _ntexts if ind < len(marks)]
         patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (_means[ipat]*corp_avg[ind] + 0.00001)
                          for ipat, _x in enumerate(_xpat)],
                  marks[ind]) for ind in _ntexts if ind < len(marks)]
-        labels = [pt for i, pt in enumerate(labels) if i in filter]
-        self.plot_patterns(patt, labels)
+        self._patt_labels = labels = [pt for i, pt in enumerate(labels) if i in filter]
+        self.save_texts()
+        self.plot(self.prepare_scatter(), x=7, y=10)
+        print("len(self._patt_data)", len(self._patt_data), len(self._patt_labels))
+        # self.plot_patterns(patt, labels)
 
     def check_deviation(self, patt):
         from statistics import stdev, variance, mean, median_high
@@ -224,9 +270,16 @@ class Clauses:
                         for start, stop in list(zip(pun, pun[1:])) if stop > (start + 1)]
         return self.clauses
 
+    def plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+        for style, style_color in enumerate(colors):
+            plt.scatter(txdata[style][x], txdata[style][y], color=style_color)
+        plt.show()
+
     def plot_patterns(self, patt, labels):
         from itertools import cycle
-        lines = ["-", "--", "-.", ":"]
+        lines = ["-", "-", "-", "--", "--", "--", ":", ":", ":"]
+        lines = ["-"]*GEN_CNT + ["--"]*GEN_CNT +  [":"]*GEN_CNT
+        # lines = ["-", "--", "-.", ":"]
         linecycler = cycle(lines)
         _ = self.punct
         fig = plt.figure()
