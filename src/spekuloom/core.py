@@ -24,27 +24,34 @@
 """
 import os
 import pickle
-
+from enum import Enum, auto
 from matplotlib.pyplot import bar, show
 import matplotlib.pyplot as plt
 from nltk.tokenize import sent_tokenize, word_tokenize
 from spekuloom.util import Mont
 
-PATT_CUT = 100
-CLAZ = Mont().mont_symbol_pt()
-KIND_CROP_PT = 3
-WINDOW = 4
-WINDOW_OVERLAP = WINDOW - 1
-COUNT_MIN = -2
-COUNT_MAX = 20
-PATTERNS = 400
-CNT_CUT = 7.5
-TXT_OFF = 800
-TXT_CUT = 8000
-FACTOR = 10
-GEN_CNT = 4
-TXT_DIR = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
-TXT_TYPES = "basico  intermediario  transitorio".split()
+
+class Z:
+    GEN_CNT: int = 4
+    PATT_CUT: int = 100
+    CLAZ: dict = Mont().mont_symbol_pt()
+    KIND_CROP_PT: int = 3
+    WINDOW: int = 4
+    WINDOW_OVERLAP: int = 3
+    COUNT_MIN: int = -2
+    COUNT_MAX: int = 20
+    PATTERNS: int = 400
+    CNT_CUT: int = 7.5
+    TXT_OFF: int = 800
+    TXT_CUT: int = 8000
+    FACTOR: int = 10
+    TXT_DIR: str = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
+    TXT_TYPES: list = "basico  intermediario  transitorio".split()
+
+
+class Agregator(Enum):
+    WORD_PATTERN = auto()
+
 
 tagger = pickle.load(open("tagger.pkl", "rb"))
 
@@ -53,7 +60,7 @@ class Fragment:
     """
     Text available in corpora.
     """
-    WORD_PATTERN = None
+    PATTERN = {patt: None for patt in Agregator}
 
     def __init__(self, text, kind="", parent=None):
         self._parent = parent
@@ -64,7 +71,7 @@ class Fragment:
 
     @property
     def word_pattern(self):
-        return Fragment.WORD_PATTERN
+        return Fragment.PATTERN[Agregator.WORD_PATTERN]
 
     @property
     def parent(self):
@@ -109,11 +116,11 @@ class Pattern(dict):
     def format_data_for_plotting(survey):
         h_count = [(count, "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;"))
                    for name, count in survey]
-        h_count = [(x, count, label) for x, (count, label) in enumerate(sorted(h_count, reverse=True))][:PATT_CUT]
+        h_count = [(count, label) for x, (count, label) in enumerate(sorted(h_count, reverse=True))][:Z.PATT_CUT]
         print(h_count)
-        xaxis, yaxis, labels = list(zip(*h_count))
-        print(xaxis, yaxis, labels)
-        return xaxis, yaxis, labels
+        yaxis, labels = list(zip(*h_count))
+        print(yaxis, labels)
+        return yaxis, labels
 
 
 class Corpora(Fragment):
@@ -122,19 +129,20 @@ class Corpora(Fragment):
     """
     def __init__(self, text, kind=""):
         # print("Text", text[:4], kind)
-        Fragment.WORD_PATTERN = Pattern()
+        Fragment.PATTERN[Agregator.WORD_PATTERN] = Pattern()
         super().__init__(text, kind)
 
     def tokenize(self):
+        gen_cnt, text_types = Z.GEN_CNT, Z.TXT_TYPES
         self._kind = []
         _texts = list()
-        for x in TXT_TYPES:
-            self._kind.extend([x] * GEN_CNT)
+        for x in text_types:
+            self._kind.extend([x] * gen_cnt)
         _corp = [TextC(
-            open(os.path.join(os.path.join(TXT_DIR, textype), _text), "r").read()[TXT_OFF:TXT_CUT], kind=textype)
-                 for textype in TXT_TYPES
-                 for _, _dir, _texts in os.walk(os.path.join(TXT_DIR, textype))
-                 for _, _text in zip(range(GEN_CNT), _texts)
+            open(os.path.join(os.path.join(Z.TXT_DIR, textype), _text), "r").read()[Z.TXT_OFF:Z.TXT_CUT], kind=textype)
+                 for textype in text_types
+                 for _, _dir, _texts in os.walk(os.path.join(Z.TXT_DIR, textype))
+                 for _, _text in zip(range(gen_cnt), _texts)
                  ]
         return _corp
 
@@ -158,8 +166,8 @@ class TextC(Fragment):
 
     def symbolize(self):
         fragments = [pattern for sentence in self.fragments for pattern in sentence.pattern]
-        window_of_n_words = [fragments[offset:] for offset in range(WINDOW)]
-        window_of_n_words.append(list(range(WINDOW_OVERLAP))*1000)
+        window_of_n_words = [fragments[offset:] for offset in range(Z.WINDOW)]
+        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP))*1000)
         return ["".join(word for word in window) for *window, count in zip(*window_of_n_words)
                 if all(x is not None for x in window) and not count]
 
@@ -176,8 +184,8 @@ class Sentence(Fragment):
         return [Word(text, kind, parent=self) for text, kind in tagger.tag(word_tokenize(self._text, "portuguese"))]
 
     def symbolize(self):
-        window_of_n_words = [self._fragments[offset:] for offset in range(WINDOW)]
-        window_of_n_words.append(list(range(WINDOW_OVERLAP))*1000)
+        window_of_n_words = [self._fragments[offset:] for offset in range(Z.WINDOW)]
+        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP))*1000)
         return [self.word_pattern.add("".join(word.pattern for word in window), host=self)
                 for *window, count in zip(*window_of_n_words)
                 if all(x.pattern is not None for x in window) and not count]
@@ -195,22 +203,23 @@ class Word(Fragment):
         return []
 
     def symbolize(self):
-        return CLAZ[self._kind[:KIND_CROP_PT]] if self._kind[:KIND_CROP_PT] in CLAZ else None
+        return Z.CLAZ[self._kind[:Z.KIND_CROP_PT]] if self._kind[:Z.KIND_CROP_PT] in Z.CLAZ else None
 
 
 class Inscription:
     def __init__(self):
         self.corpora = Corpora("portuguese")
 
-    def histo_plot(self, xaxis, yaxis, labels):
+    def histo_plot(self, yaxis, labels):
         _ = self
+        xaxis = list(range(0, len(labels)))
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
 
         ax = fig.add_subplot(111)
         fig.subplots_adjust(top=0.92, left=0.05, right=0.98, bottom=0.08)
         ax.set_xticklabels(labels)
-        plt.xticks(list(range(0, len(labels))))
+        plt.xticks(xaxis)
         # axes = plt.gca()
         # axes.set_ylim([COUNT_MIN, COUNT_MAX])
         ax.set_xlabel('patterns')
