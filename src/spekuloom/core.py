@@ -25,15 +25,17 @@
 import os
 import pickle
 from enum import Enum, auto
-from matplotlib.pyplot import bar, show
+
 import matplotlib.pyplot as plt
+from matplotlib.pyplot import bar, show
 from nltk.tokenize import sent_tokenize, word_tokenize
+
 from spekuloom.util import Mont
 
 
 class Z:
     GEN_CNT: int = 4
-    PATT_CUT: int = 100
+    PATT_CUT: int = 200
     CLAZ: dict = Mont().mont_symbol_pt()
     KIND_CROP_PT: int = 3
     WINDOW: int = 4
@@ -102,31 +104,12 @@ class Pattern(dict):
         self[pattern] = self.setdefault(pattern, []) + [host]
         return pattern
 
-    def survey_major_ordered_absolute_pattern_count(self):
-        survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
-        return self.format_data_for_plotting(survey)
-
-    def survey_ordered_pattern_count_across_texts(self, func=max):
-        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
-        survey = [(pattern, func(texts.count(text) for text in set(texts)))
-                  for pattern, texts in pattern_across_texts.items()]
-        return self.format_data_for_plotting(survey)
-
-    @staticmethod
-    def format_data_for_plotting(survey):
-        h_count = [(count, "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;"))
-                   for name, count in survey]
-        h_count = [(count, label) for x, (count, label) in enumerate(sorted(h_count, reverse=True))][:Z.PATT_CUT]
-        print(h_count)
-        yaxis, labels = list(zip(*h_count))
-        print(yaxis, labels)
-        return yaxis, labels
-
 
 class Corpora(Fragment):
     """
         Collection of texts representing a literate language
     """
+
     def __init__(self, text, kind=""):
         # print("Text", text[:4], kind)
         Fragment.PATTERN[Agregator.WORD_PATTERN] = Pattern()
@@ -140,26 +123,18 @@ class Corpora(Fragment):
             self._kind.extend([x] * gen_cnt)
         _corp = [TextC(
             open(os.path.join(os.path.join(Z.TXT_DIR, textype), _text), "r").read()[Z.TXT_OFF:Z.TXT_CUT], kind=textype)
-                 for textype in text_types
-                 for _, _dir, _texts in os.walk(os.path.join(Z.TXT_DIR, textype))
-                 for _, _text in zip(range(gen_cnt), _texts)
-                 ]
+            for textype in text_types
+            for _, _dir, _texts in os.walk(os.path.join(Z.TXT_DIR, textype))
+            for _, _text in zip(range(gen_cnt), _texts)
+        ]
         return _corp
-
-    def survey_major_ordered_absolute_pattern_count(self):
-        return self.word_pattern.survey_major_ordered_absolute_pattern_count()
-
-    def survey_major_ordered_pattern_count_across_texts(self):
-        return self.word_pattern.survey_ordered_pattern_count_across_texts()
-
-    def survey_minor_ordered_pattern_count_across_texts(self):
-        return self.word_pattern.survey_ordered_pattern_count_across_texts(func=min)
 
 
 class TextC(Fragment):
     """
     Text available in corpora.
     """
+
     def __init__(self, text, kind=""):
         # print("Text", text[:4], kind)
         super().__init__(text, kind)
@@ -167,7 +142,7 @@ class TextC(Fragment):
     def symbolize(self):
         fragments = [pattern for sentence in self.fragments for pattern in sentence.pattern]
         window_of_n_words = [fragments[offset:] for offset in range(Z.WINDOW)]
-        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP))*1000)
+        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP)) * 1000)
         return ["".join(word for word in window) for *window, count in zip(*window_of_n_words)
                 if all(x is not None for x in window) and not count]
 
@@ -185,7 +160,7 @@ class Sentence(Fragment):
 
     def symbolize(self):
         window_of_n_words = [self._fragments[offset:] for offset in range(Z.WINDOW)]
-        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP))*1000)
+        window_of_n_words.append(list(range(Z.WINDOW_OVERLAP)) * 1000)
         return [self.word_pattern.add("".join(word.pattern for word in window), host=self)
                 for *window, count in zip(*window_of_n_words)
                 if all(x.pattern is not None for x in window) and not count]
@@ -195,6 +170,7 @@ class Word(Fragment):
     """
     Words broken by tokenizer.
     """
+
     def __init__(self, text, kind="", parent=None):
         super().__init__(text, kind, parent=parent)
 
@@ -206,9 +182,10 @@ class Word(Fragment):
         return Z.CLAZ[self._kind[:Z.KIND_CROP_PT]] if self._kind[:Z.KIND_CROP_PT] in Z.CLAZ else None
 
 
-class Inscription:
-    def __init__(self):
-        self.corpora = Corpora("portuguese")
+class Inscription(Fragment):
+    def __init__(self, text="portuguese"):
+        super().__init__(text)
+        self.corpora = Corpora(text)
 
     def histo_plot(self, yaxis, labels):
         _ = self
@@ -241,14 +218,42 @@ class Inscription:
             t = t.replace("x1b[1;", "\033[1;")
             print("{}\n".format(t))
 
+    def survey_major_ordered_absolute_pattern_count(self):
+        survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
+        return self.format_data_for_plotting(survey)
 
-def main():
-    # histo_count()
-    # show_sample()
-    inscription = Inscription()
-    # inscription.histo_plot(*inscription.corpora.survey_major_ordered_absolute_pattern_count())
-    inscription.histo_plot(*inscription.corpora.survey_major_ordered_pattern_count_across_texts())
+    def survey_ordered_pattern_count_across_texts(self, func=max):
+        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
+        survey = [(pattern, func(texts.count(text) for text in set(texts)))
+                  for pattern, texts in pattern_across_texts.items()]
+        return self.format_data_for_plotting(survey)
+
+    @staticmethod
+    def format_data_for_plotting(survey):
+        h_count = [(count, "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;"))
+                   for name, count in survey]
+        h_count = [(count, label) for x, (count, label) in enumerate(sorted(h_count, reverse=True))][:Z.PATT_CUT]
+        print(h_count)
+        yaxis, labels = list(zip(*h_count))
+        print(yaxis, labels)
+        return yaxis, labels
+
+    def items(self):
+        return self.word_pattern.items()
+
+
+insc = Inscription()
+
+
+class Run:
+    HISTO_COUNT, HOW_SAMPLE, ABSOLUTE, MAJOR_ACROSS, MINOR_ACROSS = [
+        insc.histo_count,
+        insc.show_sample,
+        lambda: insc.histo_plot(*insc.survey_major_ordered_absolute_pattern_count()),
+        lambda: insc.histo_plot(*insc.survey_ordered_pattern_count_across_texts()),
+        lambda: insc.histo_plot(*insc.survey_ordered_pattern_count_across_texts(min))
+    ]
 
 
 if __name__ == '__main__':
-    main()
+    Run.MAJOR_ACROSS()
