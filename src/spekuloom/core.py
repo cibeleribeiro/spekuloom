@@ -29,6 +29,7 @@ from enum import Enum, auto
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import bar, show
 from nltk.tokenize import sent_tokenize, word_tokenize
+from numpy.ma import arange
 
 from spekuloom.util import Mont
 
@@ -189,7 +190,8 @@ class Inscription(Fragment):
 
     def histo_plot(self, yaxis, labels):
         _ = self
-        xaxis = list(range(0, len(labels)))
+        xaxis = arange(0.0, len(labels), 1.0)
+        # xaxis = [1.0 * x for x in range(0, len(labels))]
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
 
@@ -202,8 +204,8 @@ class Inscription(Fragment):
         ax.set_xlabel('patterns')
         ax.set_ylabel('count')
         plt.xticks(rotation=90)
-
-        ax.bar(xaxis, yaxis)
+        for xoff, (ydata, ycolor) in enumerate(zip(yaxis, list("rgbmyc"))):
+            ax.bar(xaxis+0.2*xoff, ydata, width=0.2, color=ycolor)
         show()
 
     def histo_count(self):
@@ -224,17 +226,18 @@ class Inscription(Fragment):
 
     def survey_ordered_pattern_count_across_texts(self, func=max):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
-        survey = [(pattern, func(texts.count(text) for text in set(texts)))
+        survey = [(pattern, [func(texts.count(text) for text in set(texts))])
                   for pattern, texts in pattern_across_texts.items()]
         return self.format_data_for_plotting(survey)
 
     @staticmethod
     def format_data_for_plotting(survey):
-        h_count = [(count, "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;"))
-                   for name, count in survey]
-        h_count = [(count, label) for x, (count, label) in enumerate(sorted(h_count, reverse=True))][:Z.PATT_CUT]
+        survey = survey[:Z.PATT_CUT]
+        labels = ["".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
+                  for name, _ in survey]
+        h_count = [count for _, count in survey]
         print(h_count)
-        yaxis, labels = list(zip(*h_count))
+        yaxis = list(zip(*h_count))
         print(yaxis, labels)
         return yaxis, labels
 
