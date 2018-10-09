@@ -22,6 +22,7 @@
 .. moduleauthor:: Carlo Oliveira <carlo@nce.ufrj.br>
 
 """
+import operator
 import os
 import pickle
 from enum import Enum, auto
@@ -224,11 +225,24 @@ class Inscription(Fragment):
         survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
         return self.format_data_for_plotting(survey)
 
+    def survey_ordered_pattern_dispersion_across_texts(self, threshold=3.5):
+        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
+        survey = [(pattern, [max(texts.count(text) for text in set(texts))
+                             - min(texts.count(text) for text in set(texts))])
+                  for pattern, texts in pattern_across_texts.items()]
+        survey = [(pattern, dispersion) for pattern, dispersion in survey if dispersion[0] >= threshold]
+        survey.sort(key=operator.itemgetter(1), reverse=True)
+        return survey
+
     def survey_ordered_pattern_count_across_texts(self, func=max):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
         survey = [(pattern, [func(texts.count(text) for text in set(texts))])
                   for pattern, texts in pattern_across_texts.items()]
+        #survey.sort(key=operator.itemgetter(1))
         return self.format_data_for_plotting(survey)
+
+    def arrange_data_for_learning(self):
+        data = self.survey_ordered_pattern_dispersion_across_texts()
 
     @staticmethod
     def format_data_for_plotting(survey):
@@ -249,14 +263,15 @@ insc = Inscription()
 
 
 class Run:
-    HISTO_COUNT, HOW_SAMPLE, ABSOLUTE, MAJOR_ACROSS, MINOR_ACROSS = [
+    HISTO_COUNT, HOW_SAMPLE, ABSOLUTE, MAJOR_ACROSS, MINOR_ACROSS, DIPERS_ACROSS = [
         insc.histo_count,
         insc.show_sample,
         lambda: insc.histo_plot(*insc.survey_major_ordered_absolute_pattern_count()),
         lambda: insc.histo_plot(*insc.survey_ordered_pattern_count_across_texts()),
-        lambda: insc.histo_plot(*insc.survey_ordered_pattern_count_across_texts(min))
+        lambda: insc.histo_plot(*insc.survey_ordered_pattern_count_across_texts(min)),
+        lambda: insc.histo_plot(*insc.survey_ordered_pattern_dispersion_across_texts())
     ]
 
 
 if __name__ == '__main__':
-    Run.MAJOR_ACROSS()
+    Run.DIPERS_ACROSS()
