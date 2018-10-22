@@ -12,6 +12,7 @@ from scipy.interpolate import spline
 import util
 import pickle
 from nltk import BrillTagger
+
 tagger = pickle.load(open("tagger.pkl", "rb"))
 
 #
@@ -46,14 +47,18 @@ FACTOR = 10
 '''
 WINDOW = 4
 COUNT_MIN = -2
-COUNT_MAX = 100
+COUNT_MAX = 20
 PATTERNS = 400
-CNT_CUT = 10
+CNT_CUT = 7.5
 FACTOR = 10
+GEN_CNT = 4
+TXT_DIR = "/home/carlo/Documentos/doc/academia/projetos/Spekuloom/"
+TXT_TYPES = "basico  intermediario  transitorio".split()
 
 
 class Clauses:
     def __init__(self):
+        classes = "contos critica cronica miscelanea poesia romance teatro".split()
         self.token = self.punct = self.clauses = self.patterns = ''
         self.punctuation = list(",.:;!?") + ["CC", "--"]
         self.punctuate = list(",.:;!?-")
@@ -63,7 +68,19 @@ class Clauses:
         self.classes = util.Mont().mont_symbol_pt()
         self.classes.update({pt: "\033[1;33m{}\033[1;0m".format(pt) for pt in self.punctuate})
         self.marker()
-        self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        self.gens = {gen: [machado.words(txid) for txid in machado.fileids() if gen in txid] for gen in classes}
+        self.texts = []
+        self.legends = []
+        self._patt_data = []
+        self._patt_labels = []
+        for gen in classes:
+            self.legends.extend([gen]*GEN_CNT)
+            self.texts.extend([tx for tx in self.gens[gen]][:GEN_CNT])
+        # self.texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto][:20]
+        for txt in self.texts:
+            print(txt[1000:1004])
+        # for fid in machado.fileids():
+        #     print(fid)
         # self.survey_corpora()
         # self.survey_patterns()
 
@@ -75,16 +92,52 @@ class Clauses:
         _clauses = self.split_clauses(_text)
         self.marker(_clauses)
 
-    def text_setup(self, text):
-        text = ' '.join(text[500:8500])
+    def text_setup(self, _text):
+        _text = ' '.join(_text[500:4500])
         for pt in self.punctuate:
-            text = text.replace(" {} ".format(pt), "{} ".format(pt))
-        text = text.replace("--", u"\u2014")
-        text = text.replace("- ", "-")
-        text = text.replace(" ' ", "'")
-        text = text.replace("Mr.", "Mrp")
-        text = text.replace("", "")
-        return text
+            _text = _text.replace(" {} ".format(pt), "{} ".format(pt))
+        _text = _text.replace("--", u"\u2014")
+        _text = _text.replace("- ", "-")
+        _text = _text.replace(" ' ", "'")
+        _text = _text.replace("Mr.", "Mrp")
+        _text = _text.replace("", "")
+        return _text
+
+    def add_texts(self):
+        legend = []
+        texts = []
+        for x in TXT_TYPES:
+            legend.extend([x] * GEN_CNT)
+
+        self.legends.extend(legend)
+        for textype in TXT_TYPES:
+            txt_dir = TXT_DIR + textype
+            for _, _dir, _texts in os.walk(txt_dir):
+                for _, _text in zip(range(GEN_CNT), _texts):
+                    print("_dir", txt_dir, _text)
+                    _text = open(os.path.join(txt_dir, _text), "r").read()
+                    text_words = word_tokenize(_text)
+                    texts.append(text_words)
+                break
+        return legend, texts
+
+    def save_texts(self):
+        SP = "\t"
+        lines = list()
+        lines.append(SP.join(self._patt_labels+["estilo\n"]))
+        lines.append(SP.join(["c"]*len(self._patt_labels)+["d\n"]))
+        lines.append(SP.join([""]*len(self._patt_labels)+["class\n"]))
+        _dat_ = zip(*self._patt_data)
+        _data = [SP.join(f"{dat:3<16}" for dat in line)+",{}\n".format(estilo)
+                 for estilo, line in zip(self.legends, _dat_)]
+        lines.extend(_data)
+        with open("estilo.tab", "w") as estilo:
+            estilo.writelines(lines)
+
+    def prepare_scatter(self):
+        _patt = self._patt_data
+        return [[t_patt[delta:delta+GEN_CNT]for t_patt in _patt]
+                for delta in range(0, len(self.legends), GEN_CNT)]
 
     def survey_corpora(self, wind=WINDOW):
         corpora = []
@@ -92,17 +145,20 @@ class Clauses:
         lcorpora = []
         cp = PATTERNS
         # _texts = [text1, text2, text3, text6, text7, text8, text9]
-        _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
-        print([t[10000:10020] for t in _texts])
+        self.legends, self.texts = self.add_texts()
+        _texts = self.texts[:]
+        # _texts = [machado.words(conto) for conto in machado.fileids() if "contos" in conto]
+        print([t[500:504] for t in _texts])
         # return
         _ntexts = range(len(_texts))
         for ind, txt in enumerate(_texts):
             _text = self.text_setup(txt)
             self.split_clauses(_text)
-            dcorpora[ind] = {k: v for k, v in self.survey_patterns(wind)}
+            patterns_surveyed = self.survey_patterns(wind)
+            dcorpora[ind] = {k: v for k, v in patterns_surveyed}
 
-            corpora.extend(self.survey_patterns(wind))
-            lcorpora.append(self.survey_patterns(wind))
+            corpora.extend(patterns_surveyed)
+            lcorpora.append(patterns_surveyed)
 
         self.patterns = {}
         for pat in corpora:
@@ -122,20 +178,58 @@ class Clauses:
         for sp, c in sorted_pattern[0][:cp]:
             print("sp : {} {}\n".format(sp, c))
         marks = 'rs gs bs ms c^ yv k. w* c^'.split()
+        marks *= 5
         _xpat = list(k for k, _ in sorted_pattern[0][:cp])
         _xpat = [_x for _x in _xpat if any([dcorpora[ind].setdefault(_x, 0) > CNT_CUT for ind in _ntexts])]
-        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if ind and _xpat}
+        corp_avg = {ind: median(dcorpora[ind].setdefault(_x, 0) for _x in _xpat) for ind in _ntexts if _xpat}
         # corp_avg = {ind: sum(dcorpora[ind].setdefault(_x, 0) for _x in _xpat)/len(_xpat) for ind in _ntexts}
-        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind]+0.00001) for _x in _xpat],
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (corp_avg[ind] + 0.00001) for _x in _xpat],
                  marks[ind]) for ind in _ntexts if ind < len(marks)]
         labels = ["".join(list(l)[x] for x in range(7, wind * 14, 14)) for l in _xpat]
         print(labels)
         print(list(avp.values()))
-        self.plot_patterns(patt, labels)
+        filter, _means = self.check_deviation(patt)
+        _xpat = [pt for i, pt in enumerate(_xpat) if i in filter]
+        _xpmeans = zip(_xpat, _means)
+        for x, m in _xpmeans:
+            print(x, end=" ")
+            print(m, end=" ")
+        _xpmeans = zip(_xpat, _means)
+        _texts = self.texts[:]
+        _patt_data = [[FACTOR * dcorpora[ind].setdefault(_x, 0) / (_m*corp_avg[ind] + 0.00001) for _x, _m in _xpmeans]
+                      for ind in _ntexts]
+        self._patt_data = [[FACTOR * dcorpora[ind].setdefault(_x, 0) / (_means[ipat]*corp_avg[ind] + 0.00001)
+                            for ipat, _x in enumerate(_xpat)] for ind in _ntexts if ind < len(marks)]
+        patt = [(_xpat, [FACTOR * dcorpora[ind].setdefault(_x, 0) / (_means[ipat]*corp_avg[ind] + 0.00001)
+                         for ipat, _x in enumerate(_xpat)],
+                 marks[ind]) for ind in _ntexts if ind < len(marks)]
+        self._patt_labels = labels = [pt for i, pt in enumerate(labels) if i in filter]
+        self.save_texts()
+        self.plot(self.prepare_scatter(), x=7, y=10)
+        print("len(self._patt_data)", len(self._patt_data), len(self._patt_labels))
+        # self.plot_patterns(patt, labels)
+
+    def check_deviation(self, patt):
+        from statistics import stdev, variance, mean, median_high
+        _patt = list(zip(*patt))[1]
+        results = [10*stdev(pat)/mean(pat) for pat in zip(*_patt)]
+        varia = [variance(pat)/mean(pat) for pat in zip(*_patt)]
+        mres = mean(results)
+        fresults = [10*stdev(pat)/mean(pat) if 9 < 10*stdev(pat)/mean(pat) else 0 for pat in zip(*_patt)]
+        _filter = [i for i, d in enumerate(fresults) if d > 9]
+        _means = [mean(pat) / (100/max(pat)) for i, pat in enumerate(zip(*_patt)) if i in _filter]
+        print([(i, d) for i, d in enumerate(fresults) if d > 9])
+        print(_means)
+        return _filter, _means
+        plt.plot(results)
+        plt.plot(fresults)
+        plt.plot(varia)
+        plt.show()
+
 
     def survey_patterns(self, wind=5):
         def to_shapes(shapes):
-            return "".join(self.classes.get(shape[:2], self.classes['ZZ']) for shape in shapes.split(":"))
+            return "".join(self.classes.get(shape[:3], self.classes['ZZ']) for shape in shapes.split(":"))
 
         def window(clause):
             return [":".join(x) for x in zip(*[[_tag for _, _tag in clause[ind:]] for ind in range(wind)])]
@@ -176,7 +270,17 @@ class Clauses:
                         for start, stop in list(zip(pun, pun[1:])) if stop > (start + 1)]
         return self.clauses
 
+    def plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+        for style, style_color in enumerate(colors):
+            plt.scatter(txdata[style][x], txdata[style][y], color=style_color)
+        plt.show()
+
     def plot_patterns(self, patt, labels):
+        from itertools import cycle
+        lines = ["-", "-", "-", "--", "--", "--", ":", ":", ":"]
+        lines = ["-"]*GEN_CNT + ["--"]*GEN_CNT +  [":"]*GEN_CNT
+        # lines = ["-", "--", "-.", ":"]
+        linecycler = cycle(lines)
         _ = self.punct
         fig = plt.figure()
         fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
@@ -204,15 +308,16 @@ class Clauses:
             x_smooth = np.linspace(x_sm.min(), x_sm.max(), 200)
             # y_smooth = spline(_x, npy.log([y+0.001 for y in _y]), x_smooth)
             y_smooth = spline(_x, [y if y > COUNT_MIN else 0 for y in _y], x_smooth)
-            plt.plot(x_smooth, y_smooth)
+            plt.plot(x_smooth, y_smooth, next(linecycler))
             # plt.plot(range(len(_y)), _y, _c)
-        plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
+        plt.legend(self.legends, loc='upper right')
+        # plt.legend(["moby", "sense", "genesis", "monty", "wall", "person", "thursday"], loc='upper right')
 
         plt.show()
 
 
 if __name__ == '__main__':
-    # Clauses().mark_text_ind(5)
+    # Clauses().mark_text_ind(6)
     Clauses().survey_corpora(4)
 
 """
