@@ -51,8 +51,8 @@ COUNT_MAX = 20
 PATTERNS = 400
 CNT_CUT = 7.5
 FACTOR = 10
-GEN_CNT = 4
-TXT_DIR = "/home/carlo/Documentos/doc/academia/projetos/Spekuloom/"
+GEN_CNT = 6
+TXT_DIR = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
 TXT_TYPES = "basico  intermediario  transitorio".split()
 
 
