@@ -17,7 +17,7 @@
 # Você deve ter recebido uma cópia da Licença Pública Geral GNU
 # junto com este programa, se não, veja em <http://www.gnu.org/licenses/>
 
-"""Core text processing.
+"""Core code processing.
 
 .. moduleauthor:: Carlo Oliveira <carlo@nce.ufrj.br>
 
@@ -29,16 +29,16 @@ from enum import Enum, auto
 
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import bar, show
-from nltk.tokenize import sent_tokenize, word_tokenize
+# from nltk.tokenize import sent_tokenize, word_tokenize
 from numpy.ma import arange
 
-from spekuloom.util import Mont
+from eidoloom.pytagger import GenV, TOKENS
 
 
 class Z:
-    GEN_CNT: int = 6
+    GEN_CNT: int = 1
     PATT_CUT: int = 200
-    CLAZ: dict = Mont().mont_symbol_pt()
+    CLAZ: dict = TOKENS
     KIND_CROP_PT: int = 3
     WINDOW: int = 4
     WINDOW_OVERLAP: int = 3
@@ -49,7 +49,7 @@ class Z:
     TXT_OFF: int = 800
     TXT_CUT: int = 8000
     FACTOR: int = 10
-    TXT_DIR: str = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
+    TXT_DIR: str = "/home/carlo/Documentos/dev/spekuloom/src/EidoloomCorpora/"
     TXT_TYPES: list = "basico  intermediario  transitorio".split()
 
 
@@ -57,7 +57,7 @@ class Agregator(Enum):
     WORD_PATTERN = auto()
 
 
-tagger = pickle.load(open("tagger.pkl", "rb"))
+# tagger = pickle.load(open("tagger.pkl", "rb"))
 
 
 class Fragment:
@@ -91,7 +91,8 @@ class Fragment:
         return self._fragments
 
     def tokenize(self):
-        return [Sentence(a_sentence, parent=self) for a_sentence in sent_tokenize(self._text, "portuguese")]
+        return [Sentence(self._text, parent=self)]
+        # return [Sentence(a_sentence, parent=self) for a_sentence in GenV().tokenize(self._text)]
 
     def __repr__(self):
         return "\t<{}>: {}:{}--${}$-{}*µ*{}*\n".format(
@@ -164,7 +165,7 @@ class Sentence(Fragment):
         super().__init__(text, kind, parent=parent)
 
     def tokenize(self):
-        return [Word(text, kind, parent=self) for text, kind in tagger.tag(word_tokenize(self._text, "portuguese"))]
+        return [Word(kind, kind, parent=self) for kind in GenV().tokenize(self._text)]
 
     def symbolize(self):
         window_of_n_words = [self._fragments[offset:] for offset in range(Z.WINDOW)]
@@ -227,12 +228,15 @@ class Inscription(Fragment):
         bar(h_count[0], h_count[1])
         show()
 
-    def show_sample(self):
+    def show_sample(self, *_):
+        pass
+        '''
         for t in self.corpora.__repr__().split("\\n"):
             t = t.replace("\\t", "\t")
             t = t.replace("\\", "")
             t = t.replace("x1b[1;", "\033[1;")
             print("{}\n".format(t))
+        '''
 
     def survey_major_ordered_absolute_pattern_count(self):
         survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
@@ -310,4 +314,4 @@ class Run:
 
 
 if __name__ == '__main__':
-    Run.HISTO_COUNT(2, 4)
+    Run.SCATTER2D(2, 4)

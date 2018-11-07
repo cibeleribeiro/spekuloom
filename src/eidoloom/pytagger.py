@@ -50,7 +50,7 @@ for fruit in fruits:
 yy = lambda: 1 * 3 ** 4 + 2 - (5 / 2 // 1) % 3
 ''')
 
-print(ast.dump(tree))
+# print(ast.dump(tree))
 
 # from spekuloom.util import Mont
 #
@@ -80,6 +80,10 @@ class GenV(ast.NodeVisitor):
         if token_name in TOKENS:
             self.gram += TOKENS[token_name]
         ast.NodeVisitor.generic_visit(self, node)
+
+    def tokenize(self, text):
+        self.visit(ast.parse(text))
+        return list(self.gram)
 
 
 '''
@@ -113,7 +117,7 @@ class NodeVisitor(ast.NodeVisitor):
     def visit_FunctionDef(self, tree_node):
         print('◨{}'.format(tree_node.name))
         [self.visit(node) for node in tree_node.body]
-'''
+
 
 
 gv = GenV()
@@ -125,7 +129,7 @@ print("toks")
 
 for tok in gv.gram:
     print("{}".format(tok), end='')
-
+'''
 """
 noun,▲
 
