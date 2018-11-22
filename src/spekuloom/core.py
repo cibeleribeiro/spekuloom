@@ -199,11 +199,12 @@ class Inscription(Fragment):
     def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
         _ = self
         for style, style_color in enumerate(colors):
-            plt.scatter(txdata[style][x], txdata[style][y], color=style_color)
+            plt.scatter(txdata[x][style], txdata[y][style], color=style_color)
         plt.show()
 
     def histo_plot(self, yaxis, labels):
         _ = self
+        print("yaxis", list(zip(yaxis, list("rgbmyc"))))
         xaxis = arange(0.0, len(labels), 1.0)
         # xaxis = [1.0 * x for x in range(0, len(labels))]
         fig = plt.figure()
@@ -218,6 +219,27 @@ class Inscription(Fragment):
         ax.set_xlabel('patterns')
         ax.set_ylabel('count')
         plt.xticks(rotation=90)
+        ax.bar(xaxis, yaxis, width=0.6, color="blue")
+        show()
+
+    def histo_mplt(self, yaxis, labels):
+        _ = self
+        print("yaxis", list(zip(yaxis, list("rgbmyc"))))
+        xaxis = arange(0.0, len(labels), 1.0)
+        # xaxis = [1.0 * x for x in range(0, len(labels))]
+        fig = plt.figure()
+        fig.suptitle('Corpora Pattern Count', fontsize=14, fontweight='bold')
+
+        ax = fig.add_subplot(111)
+        fig.subplots_adjust(top=0.92, left=0.05, right=0.98, bottom=0.08)
+        ax.set_xticklabels(labels)
+        plt.xticks(xaxis)
+        # axes = plt.gca()
+        # axes.set_ylim([COUNT_MIN, COUNT_MAX])
+        ax.set_xlabel('patterns')
+        ax.set_ylabel('count')
+        plt.xticks(rotation=90)
+        # ax.bar(xaxis + 0.2 * xoff, yaxis, width=0.2, color="blue")
         for xoff, (ydata, ycolor) in enumerate(zip(yaxis, list("rgbmyc"))):
             ax.bar(xaxis+0.2*xoff, ydata, width=0.2, color=ycolor)
         show()
@@ -227,7 +249,7 @@ class Inscription(Fragment):
         bar(h_count[0], h_count[1])
         show()
 
-    def show_sample(self):
+    def show_sample(self, *_):
         for t in self.corpora.__repr__().split("\\n"):
             t = t.replace("\\t", "\t")
             t = t.replace("\\", "")
@@ -236,10 +258,13 @@ class Inscription(Fragment):
 
     def survey_major_ordered_absolute_pattern_count(self):
         survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
+        print(list(zip(*survey)))
         return self.format_data_for_plotting(survey)
 
     def survey_ordered_pattern_dispersion_across_texts(self, threshold=2.0):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
+        self.pattern_count_by_text = {pattern: {text: texts.count(text) for text in self.corpora.fragments}
+                                      for pattern, texts in pattern_across_texts.items()}
         survey = [(pattern, [max(texts.count(text) for text in set(texts))
                              - min(texts.count(text) for text in set(texts))])
                   for pattern, texts in pattern_across_texts.items()]
@@ -273,20 +298,31 @@ class Inscription(Fragment):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
         survey = [(pattern, [func(texts.count(text) for text in set(texts))])
                   for pattern, texts in pattern_across_texts.items()]
-        # survey.sort(key=operator.itemgetter(1))
+        survey.sort(key=operator.itemgetter(1), reverse=True)
         return self.format_data_for_plotting(survey)
 
     def arrange_data_for_learning(self):
-        data = self.survey_ordered_pattern_dispersion_across_texts()
+        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
+
+        _ = self.survey_ordered_pattern_dispersion_across_texts()
+        labels = ["".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
+                  for name in self.selected_patterns]
+        head = ["class"] + labels
+        pcbt = self.pattern_count_by_text
+        body = [[text.kind]+[pcbt[pattern][text] for pattern in self.selected_patterns]
+                for text in self.corpora.fragments]
+        print(head)
+        for t in body:
+            print(t)
 
     @staticmethod
     def format_data_for_plotting(survey):
         survey = survey[:Z.PATT_CUT]
         labels = ["".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
                   for name, _ in survey]
-        h_count = [count for _, count in survey]
+        yaxis = h_count = [count for _, count in survey]
         print(h_count)
-        yaxis = list(zip(*h_count))
+        yaxis, _ = list(zip(*h_count)) if len(h_count[0])>1 else [[h[0] for h in h_count], []]
         print(yaxis, labels)
         return yaxis, labels
 
@@ -310,4 +346,5 @@ class Run:
 
 
 if __name__ == '__main__':
-    Run.HISTO_COUNT(2, 4)
+    # Run.DIPERS_ACROSS(5, 3)
+    insc.arrange_data_for_learning()
