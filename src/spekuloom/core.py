@@ -238,7 +238,7 @@ class Inscription(Fragment):
         survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
         return self.format_data_for_plotting(survey)
 
-    def survey_ordered_pattern_dispersion_across_texts(self, threshold=2.0):
+    def survey_ordered_pattern_dispersion_across_texts(self, threshold=3.0):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
         survey = [(pattern, [max(texts.count(text) for text in set(texts))
                              - min(texts.count(text) for text in set(texts))])
@@ -277,7 +277,33 @@ class Inscription(Fragment):
         return self.format_data_for_plotting(survey)
 
     def arrange_data_for_learning(self):
-        data = self.survey_ordered_pattern_dispersion_across_texts()
+        def clean(name):
+            return "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
+        _ = self.survey_ordered_pattern_dispersion_across_texts()
+        data = self.selected_patterns
+        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()
+                                if pattern in data}
+        # texts_with_patterns
+        pat_count_in_texts = {pattern: [sum(1 for text in texts if text is given)
+                                        for given in self.corpora.fragments]
+                              for pattern, texts in pattern_across_texts.items()}
+        just_count_in_texts = [[clean(pattern)]+[sum(1 for text in texts if text is given)
+                                                 for given in self.corpora.fragments]
+                               if pattern else ['class']+[given.kind
+                                                          for given in self.corpora.fragments]
+                               for pattern, texts in list(pattern_across_texts.items())+[(0, 0)]]
+        for pat, host in pat_count_in_texts.items():
+            print(pat, host)
+        pat_plus_pat_count = list(zip(*just_count_in_texts))
+        table_file = [pat_plus_pat_count[0]]+[list('c'*22+"d"),list(' '*22+"c")]+pat_plus_pat_count[1:]
+        for line in table_file:
+            print(line)
+        from csv import writer
+        with open("estilo.tab", "w") as tab_file:
+            csvwriter= writer(tab_file, delimiter='\t')
+            for row in table_file:
+                csvwriter.writerow(row)
+
 
     @staticmethod
     def format_data_for_plotting(survey):
@@ -310,4 +336,5 @@ class Run:
 
 
 if __name__ == '__main__':
-    Run.HISTO_COUNT(2, 4)
+    insc.arrange_data_for_learning()
+    # Run.DIPERS_ACROSS(2, 4)
