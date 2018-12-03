@@ -36,7 +36,7 @@ from spekuloom.util import Mont
 
 
 class Z:
-    GEN_CNT: int = 6
+    GEN_CNT: int = 11
     PATT_CUT: int = 200
     CLAZ: dict = Mont().mont_symbol_pt()
     KIND_CROP_PT: int = 3
@@ -199,7 +199,7 @@ class Inscription(Fragment):
     def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
         _ = self
         for style, style_color in enumerate(colors):
-            plt.scatter(txdata[style][x], txdata[style][y], color=style_color)
+            plt.scatter(txdata[x][style], txdata[y][style], color=style_color)
         plt.show()
 
     def histo_plot(self, yaxis, labels):
@@ -295,7 +295,8 @@ class Inscription(Fragment):
         for pat, host in pat_count_in_texts.items():
             print(pat, host)
         pat_plus_pat_count = list(zip(*just_count_in_texts))
-        table_file = [pat_plus_pat_count[0]]+[list('c'*22+"d"),list(' '*22+"c")]+pat_plus_pat_count[1:]
+        pat_cnt = len(pat_plus_pat_count[0])-1
+        table_file = [pat_plus_pat_count[0]]+[list('c'*pat_cnt+"d"),list(' '*pat_cnt+"c")]+pat_plus_pat_count[1:]
         for line in table_file:
             print(line)
         from csv import writer
@@ -336,5 +337,5 @@ class Run:
 
 
 if __name__ == '__main__':
-    insc.arrange_data_for_learning()
-    # Run.DIPERS_ACROSS(2, 4)
+    # insc.arrange_data_for_learning()
+    Run.SCATTER2D(1, 2)

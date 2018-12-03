@@ -11,6 +11,11 @@ class Learn:
         probabilities = classifier(self.data, 1)
         for p, d in zip(probabilities[:], self.data[:]):
             print(p[target_class], d.get_class())
+        c_values = self.data.domain.class_var.values
+        for d in self.data:
+            c = classifier(d)
+            print("{}, originally {}".format(c_values[int(c[0])],
+                                             d.get_class()))
 
 
 if __name__ == '__main__':
