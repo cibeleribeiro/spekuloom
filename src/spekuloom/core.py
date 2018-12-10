@@ -196,11 +196,33 @@ class Inscription(Fragment):
         self.selected_patterns = []
         self.corpora = Corpora(text)
 
-    def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+    def _scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
         _ = self
         for style, style_color in enumerate(colors):
             plt.scatter(txdata[x][style], txdata[y][style], color=style_color)
         plt.show()
+
+    def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+        def strip_vt100(name):
+            return "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
+
+        fig1 = plt.figure()
+        # x = range(len(data)+2)
+        # plt.ylim(0, 35)
+        # plt.xlim(0, 128)
+        plt.xlabel(strip_vt100(self.selected_patterns[x]))
+        plt.ylabel(strip_vt100(self.selected_patterns[y]))
+        plt.title('Contagem de Padrões nas Categorias ')
+        for style, style_color in enumerate(colors):
+            plt.scatter(txdata[x][style], txdata[y][style], s=80, color=style_color)
+        plt.legend([plot for plot in Z.TXT_TYPES], ncol=5, bbox_to_anchor=(0, 1, 1, 3),
+                   loc=3, borderaxespad=1.8, mode="expand")
+        plt.grid(True)
+        plt.subplots_adjust(bottom=0.08, left=.05, right=.96, top=.9, hspace=.35)
+        # fig1.savefig("delta0/%s.jpg" % "_".join(u_name.split()))
+        plt.show()
+        # plt.show()
+
 
     def histo_plot(self, yaxis, labels):
         _ = self
@@ -296,7 +318,12 @@ class Inscription(Fragment):
             print(pat, host)
         pat_plus_pat_count = list(zip(*just_count_in_texts))
         pat_cnt = len(pat_plus_pat_count[0])-1
-        table_file = [pat_plus_pat_count[0]]+[list('c'*pat_cnt+"d"),list(' '*pat_cnt+"c")]+pat_plus_pat_count[1:]
+        table_header = [
+            ['n']+list(pat_plus_pat_count[0]),
+            list('c'+'c'*pat_cnt+"d"),
+            list('m'+' '*pat_cnt+"c")]
+        table_body = [[name]+list(row) for name, row in enumerate(pat_plus_pat_count[1:])]
+        table_file = table_header + table_body
         for line in table_file:
             print(line)
         from csv import writer
@@ -337,5 +364,5 @@ class Run:
 
 
 if __name__ == '__main__':
-    # insc.arrange_data_for_learning()
-    Run.SCATTER2D(1, 2)
+    insc.arrange_data_for_learning()
+    # Run.SCATTER2D(1, 2)
