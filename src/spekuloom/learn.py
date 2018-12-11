@@ -29,7 +29,7 @@ class Learn:
             # probabilities = [classifier(d, tc) for tc in range(3)]
             probabilities = classifier(d, 1)[0]
             post_class = c_values[int(c[0])]
-            new_class = NEW_CLASS[tuple([1 if prob_class > 0.2 else 0 for prob_class in probabilities])]
+            new_class = NEW_CLASS[tuple([1 if prob_class > 0.44 else 0 for prob_class in probabilities])]
             if post_class != d.get_class():
                 self.mistakes[int(d['n'])] = dict(data=d, prob=probabilities, nclass=new_class)
                 print("{}:{}, originally {}".format(d['n'], post_class, d.get_class()))
@@ -41,6 +41,7 @@ class Learn:
     def sampler(self):
         for _ in range(10):
             self.test(self.get_sample(), self.data)
+        print("mistakes", self.mistakes)
         new_domain = list(set(a['nclass'] for a in self.mistakes.values()))
         class_descriptors = [data.DiscreteVariable.make(clazz) for clazz in list(new_domain)]
         # new_domain = data.Domain(new_domain, class_descriptors)  # , source=self.data.domain)
@@ -63,15 +64,16 @@ class Learn:
             print(a_data, a_data.get_class())
 
     def arrange_data_for_learning(self):
-        pat_cnt = len(self.data)
+        pat_cnt = len(self.data[0])-1
         table_header = [
-            ['n']+list(pat.name for pat in self.data.domain),
+            ['n']+list(pat.name for pat in self.data.domain.variables),
             list('c'+'c'*pat_cnt+"d"),
             list('m'+' '*pat_cnt+"c")]
         table_body = [
-            [name]+list(row) +
-            [row.get_class().value if name not in self.mistakes else self.mistakes[name]['nclass']]
+            [name]+list(row)[:-1] +
+            [row.get_class().value if name not in self.mistakes.keys() else self.mistakes[name]['nclass']]
             for name, row in enumerate(self.data)]
+        print(self.mistakes)
         table_file = table_header + table_body
         for line in table_file:
             print(line)
@@ -83,7 +85,8 @@ class Learn:
 
 
 if __name__ == '__main__':
-    Learn().sampler()
-    Learn().arrange_data_for_learning()
+    learn = Learn()
+    learn.sampler()
+    learn.arrange_data_for_learning()
     # Learn().probs()
     pass
