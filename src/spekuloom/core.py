@@ -36,7 +36,7 @@ from spekuloom.util import Mont
 
 
 class Z:
-    GEN_CNT: int = 6
+    GEN_CNT: int = 11
     PATT_CUT: int = 200
     CLAZ: dict = Mont().mont_symbol_pt()
     KIND_CROP_PT: int = 3
@@ -196,11 +196,33 @@ class Inscription(Fragment):
         self.selected_patterns = []
         self.corpora = Corpora(text)
 
-    def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+    def _scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
         _ = self
         for style, style_color in enumerate(colors):
             plt.scatter(txdata[x][style], txdata[y][style], color=style_color)
         plt.show()
+
+    def scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
+        def strip_vt100(name):
+            return "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
+
+        fig1 = plt.figure()
+        # x = range(len(data)+2)
+        # plt.ylim(0, 35)
+        # plt.xlim(0, 128)
+        plt.xlabel(strip_vt100(self.selected_patterns[x]))
+        plt.ylabel(strip_vt100(self.selected_patterns[y]))
+        plt.title('Contagem de Padrões nas Categorias ')
+        for style, style_color in enumerate(colors):
+            plt.scatter(txdata[x][style], txdata[y][style], s=80, color=style_color)
+        plt.legend([plot for plot in Z.TXT_TYPES], ncol=5, bbox_to_anchor=(0, 1, 1, 3),
+                   loc=3, borderaxespad=1.8, mode="expand")
+        plt.grid(True)
+        plt.subplots_adjust(bottom=0.08, left=.05, right=.96, top=.9, hspace=.35)
+        # fig1.savefig("delta0/%s.jpg" % "_".join(u_name.split()))
+        plt.show()
+        # plt.show()
+
 
     def histo_plot(self, yaxis, labels):
         _ = self
@@ -258,10 +280,9 @@ class Inscription(Fragment):
 
     def survey_major_ordered_absolute_pattern_count(self):
         survey = [(pattern, len(hosts)) for pattern, hosts in self.items()]
-        print(list(zip(*survey)))
         return self.format_data_for_plotting(survey)
 
-    def survey_ordered_pattern_dispersion_across_texts(self, threshold=2.0):
+    def survey_ordered_pattern_dispersion_across_texts(self, threshold=3.0):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
         self.pattern_count_by_text = {pattern: {text: texts.count(text) for text in self.corpora.fragments}
                                       for pattern, texts in pattern_across_texts.items()}
@@ -298,22 +319,43 @@ class Inscription(Fragment):
         pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
         survey = [(pattern, [func(texts.count(text) for text in set(texts))])
                   for pattern, texts in pattern_across_texts.items()]
-        survey.sort(key=operator.itemgetter(1), reverse=True)
+        # survey.sort(key=operator.itemgetter(1))
         return self.format_data_for_plotting(survey)
 
     def arrange_data_for_learning(self):
-        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()}
-
+        def clean(name):
+            return "".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
         _ = self.survey_ordered_pattern_dispersion_across_texts()
-        labels = ["".join(letter for letter in name if letter not in "\x1b[0123456789m[1;")
-                  for name in self.selected_patterns]
-        head = ["class"] + labels
-        pcbt = self.pattern_count_by_text
-        body = [[text.kind]+[pcbt[pattern][text] for pattern in self.selected_patterns]
-                for text in self.corpora.fragments]
-        print(head)
-        for t in body:
-            print(t)
+        data = self.selected_patterns
+        pattern_across_texts = {pattern: [sentence.parent for sentence in hosts] for pattern, hosts in self.items()
+                                if pattern in data}
+        # texts_with_patterns
+        pat_count_in_texts = {pattern: [sum(1 for text in texts if text is given)
+                                        for given in self.corpora.fragments]
+                              for pattern, texts in pattern_across_texts.items()}
+        just_count_in_texts = [[clean(pattern)]+[sum(1 for text in texts if text is given)
+                                                 for given in self.corpora.fragments]
+                               if pattern else ['class']+[given.kind
+                                                          for given in self.corpora.fragments]
+                               for pattern, texts in list(pattern_across_texts.items())+[(0, 0)]]
+        for pat, host in pat_count_in_texts.items():
+            print(pat, host)
+        pat_plus_pat_count = list(zip(*just_count_in_texts))
+        pat_cnt = len(pat_plus_pat_count[0])-1
+        table_header = [
+            ['n']+list(pat_plus_pat_count[0]),
+            list('c'+'c'*pat_cnt+"d"),
+            list('m'+' '*pat_cnt+"c")]
+        table_body = [[name]+list(row) for name, row in enumerate(pat_plus_pat_count[1:])]
+        table_file = table_header + table_body
+        for line in table_file:
+            print(line)
+        from csv import writer
+        with open("estilo.tab", "w") as tab_file:
+            csvwriter= writer(tab_file, delimiter='\t')
+            for row in table_file:
+                csvwriter.writerow(row)
+
 
     @staticmethod
     def format_data_for_plotting(survey):
@@ -346,5 +388,5 @@ class Run:
 
 
 if __name__ == '__main__':
-    # Run.DIPERS_ACROSS(5, 3)
     insc.arrange_data_for_learning()
+    # Run.SCATTER2D(1, 2)
