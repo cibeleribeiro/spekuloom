@@ -1,6 +1,8 @@
 from random import sample
 
 from Orange import data, classification
+from numpy import average
+
 NUNAME = ",basico,intermediario,transitorio".split(',')
 BIN = [0, 1]
 NEW_CLASS = {(a, b, c): NUNAME[a]+NUNAME[b*2]+NUNAME[c*3] for a in BIN for b in BIN for c in BIN}
@@ -29,9 +31,14 @@ class Learn:
             # probabilities = [classifier(d, tc) for tc in range(3)]
             probabilities = classifier(d, 1)[0]
             post_class = c_values[int(c[0])]
-            new_class = NEW_CLASS[tuple([1 if prob_class > 0.44 else 0 for prob_class in probabilities])]
-            if post_class != d.get_class():
-                self.mistakes[int(d['n'])] = dict(data=d, prob=probabilities, nclass=new_class)
+            # new_class = NEW_CLASS[tuple([1 if prob_class > 0.44 else 0 for prob_class in probabilities])]
+            new_class = d.get_class()
+            # if post_class != d.get_class() and new_class in NUNAME:
+            if post_class != d.get_class() and new_class in NUNAME:
+                mistakes = self.mistakes[int(d['n'])] if int(d['n']) in self.mistakes\
+                    else dict(data=d, prob=[], nclass=new_class)
+                mistakes['prob'] += [probabilities]
+                self.mistakes[int(d['n'])] = mistakes
                 print("{}:{}, originally {}".format(d['n'], post_class, d.get_class()))
 
     def get_sample(self, sampler=22):
@@ -39,9 +46,18 @@ class Learn:
         return data.Table.from_list(domain=self.data.domain, rows=adata)
 
     def sampler(self):
-        for _ in range(10):
+        for _ in range(20):
             self.test(self.get_sample(), self.data)
-        print("mistakes", self.mistakes)
+        for m in self.mistakes.values():
+            print(m['prob'])
+        for name, mst in self.mistakes.items():
+            class_probs = zip(*mst['prob'])
+            mst['prob'] = probabilities = [average(p) for p in class_probs]
+            new_class = NEW_CLASS[tuple([1 if prob_class > 0.75 else 0 for prob_class in probabilities])]
+            mst['nclass'] = new_class if new_class in NUNAME[1:] else mst['nclass']
+        for m in self.mistakes.values():
+            print(m)
+        '''
         new_domain = list(set(a['nclass'] for a in self.mistakes.values()))
         class_descriptors = [data.DiscreteVariable.make(clazz) for clazz in list(new_domain)]
         # new_domain = data.Domain(new_domain, class_descriptors)  # , source=self.data.domain)
@@ -49,6 +65,7 @@ class Learn:
             class_descriptors, data.DiscreteVariable("kind", tuple(new_domain)))  # , source=self.data.domain)
         # self.data.domain = new_domain
         print(new_domain, self.data.domain.class_var.values)
+        '''
 
         for entry, class_data in self.mistakes.items():
             new_class = class_data['nclass']
