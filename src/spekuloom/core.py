@@ -46,8 +46,8 @@ class Z:
     COUNT_MAX: int = 20
     PATTERNS: int = 400
     CNT_CUT: int = 7.5
-    TXT_OFF: int = 800
-    TXT_CUT: int = 8000
+    TXT_OFF: int = 600
+    TXT_CUT: int = 6000
     FACTOR: int = 10
     TXT_DIR: str = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
     TXT_TYPES: list = "basico  intermediario  transitorio".split()
