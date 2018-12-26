@@ -46,8 +46,8 @@ class Z:
     COUNT_MAX: int = 20
     PATTERNS: int = 400
     CNT_CUT: int = 7.5
-    TXT_OFF: int = 600
-    TXT_CUT: int = 6000
+    TXT_OFF: int = 4000
+    TXT_CUT: int = 8000
     FACTOR: int = 10
     TXT_DIR: str = "/home/carlo/Documentos/dev/spekuloom/src/Spekuloom/"
     TXT_TYPES: list = "basico  intermediario  transitorio".split()
@@ -117,9 +117,10 @@ class Corpora(Fragment):
         Collection of texts representing a literate language
     """
 
-    def __init__(self, text, kind=""):
+    def __init__(self, text, kind="", off=Z.TXT_OFF, cut=Z.TXT_CUT):
         # print("Text", text[:4], kind)
         Fragment.PATTERN[Agregator.WORD_PATTERN] = Pattern()
+        self.off, self.cut = off,cut
         super().__init__(text, kind)
 
     def tokenize(self):
@@ -129,7 +130,14 @@ class Corpora(Fragment):
         for x in text_types:
             self._kind.extend([x] * gen_cnt)
         _corp = [TextC(
-            open(os.path.join(os.path.join(Z.TXT_DIR, textype), _text), "r").read()[Z.TXT_OFF:Z.TXT_CUT],
+            open(os.path.join(os.path.join(Z.TXT_DIR, textype), _text), "r").read()[self.off:self.cut],
+            kind=textype, name=_text)
+            for textype in text_types
+            for _, _dir, _texts in os.walk(os.path.join(Z.TXT_DIR, textype))
+            for _, _text in zip(range(gen_cnt), _texts)
+        ]
+        _corp += [TextC(
+            open(os.path.join(os.path.join(Z.TXT_DIR, textype), _text), "r").read()[self.off+self.cut:self.cut+self.cut],
             kind=textype, name=_text)
             for textype in text_types
             for _, _dir, _texts in os.walk(os.path.join(Z.TXT_DIR, textype))
@@ -191,10 +199,12 @@ class Word(Fragment):
 
 
 class Inscription(Fragment):
-    def __init__(self, text="portuguese"):
+    def __init__(self, text="portuguese", corpora=None, out_text="estilo.tab"):
         super().__init__(text)
         self.selected_patterns = []
-        self.corpora = Corpora(text)
+        self.corpora = corpora or Corpora(text)
+        self.pattern_count_by_text = {}
+        self.out_text = out_text
 
     def _scatter_plot(self, txdata, x=0, y=1, colors="red blue green".split()):
         _ = self
@@ -222,7 +232,6 @@ class Inscription(Fragment):
         # fig1.savefig("delta0/%s.jpg" % "_".join(u_name.split()))
         plt.show()
         # plt.show()
-
 
     def histo_plot(self, yaxis, labels):
         _ = self
@@ -351,7 +360,7 @@ class Inscription(Fragment):
         for line in table_file:
             print(line)
         from csv import writer
-        with open("estilo.tab", "w") as tab_file:
+        with open(self.out_text, "w") as tab_file:
             csvwriter= writer(tab_file, delimiter='\t')
             for row in table_file:
                 csvwriter.writerow(row)

@@ -14,15 +14,17 @@ NEW_CLASS = {(a, b, c): NUNAME[a]+NUNAME[b*2]+NUNAME[c*3] for a in BIN for b in 
 class Learn:
     def __init__(self):
         self.data = data.Table("estilo")
-        sel_data = preprocess.SelectBestFeatures(k=8)
+        # gain = preprocess.score.FCBF()
         gain = preprocess.score.GainRatio()
+        sel_data = preprocess.SelectBestFeatures(k=8, method=gain)
         ssd = gain(self.data)
+        self.data = sel_data(self.data)
         # ssd = sel_data.score_only_nice_features(self.data, method=preprocess.EqualFreq.)
         gn = [(ind, dat) for ind, dat in enumerate(ssd.data)]
-        gns = sorted(gn, key=lambda x:x[1])
+        gns = sorted(gn, key=lambda x:x[1], reverse=True)
         for ind, dat in gns:
             pass
-            # print(ind, dat)
+            print(ind, dat)
         self.learner = classification.NaiveBayesLearner()
         self.mistakes = self.cdata = {}
 
@@ -60,14 +62,14 @@ class Learn:
         for _ in range(20):
             self.test(self.get_sample(), self.data)
         for m in self.mistakes.values():
-            print(m['prob'])
+            print("m-prob", m['prob'])
         for name, mst in self.mistakes.items():
             class_probs = zip(*mst['prob'])
             mst['prob'] = probabilities = [average(p) for p in class_probs]
-            new_class = NEW_CLASS[tuple([1 if prob_class > 0.75 else 0 for prob_class in probabilities])]
+            new_class = NEW_CLASS[tuple([1 if prob_class > 0.85 else 0 for prob_class in probabilities])]
             mst['nclass'] = new_class if new_class in NUNAME[1:] else mst['nclass']
         for m in self.mistakes.values():
-            print(m)
+            print("m-val", m)
         '''
         new_domain = list(set(a['nclass'] for a in self.mistakes.values()))
         class_descriptors = [data.DiscreteVariable.make(clazz) for clazz in list(new_domain)]
@@ -194,9 +196,9 @@ class Corpora(CoreCorpora):
 
 if __name__ == '__main__':
     learn = Learn()
-    learn.arrange_data_for_classification()
+    # learn.arrange_data_for_classification()
     # learn.arrange_data_for_learning()
-    # learn.sampler()
-    # learn.arrange_data_for_learning()
+    learn.sampler()
+    learn.arrange_data_for_learning()
     # Learn().probs()
     pass
