@@ -66,7 +66,9 @@ class Learn:
         for name, mst in self.mistakes.items():
             class_probs = zip(*mst['prob'])
             mst['prob'] = probabilities = [average(p) for p in class_probs]
-            new_class = NEW_CLASS[tuple([1 if prob_class > 0.85 else 0 for prob_class in probabilities])]
+            thresholds = (0.9, 0.4, 0.95)
+            new_class = NEW_CLASS[tuple([1 if prob_class > th else 0
+                                         for prob_class, th in zip(probabilities, thresholds)])]
             mst['nclass'] = new_class if new_class in NUNAME[1:] else mst['nclass']
         for m in self.mistakes.values():
             print("m-val", m)
