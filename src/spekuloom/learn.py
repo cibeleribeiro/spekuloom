@@ -10,8 +10,9 @@ NEW_CLASS = {(a, b, c): NUNAME[a]+NUNAME[b*2]+NUNAME[c*3] for a in BIN for b in 
 
 
 class Learn:
-    def __init__(self):
-        self.data = data.Table("estilo")
+    def __init__(self, table="estilo"):
+        self.data = data.Table(table)
+        self.table = table
         self.learner = classification.NaiveBayesLearner()
         self.mistakes = {}
 
