@@ -393,11 +393,11 @@ class Inscription(Fragment):
         pat_plus_pat_count = list(zip(*just_count_in_texts))
         pat_cnt = len(pat_plus_pat_count[0])-1
         table_header = [
-            ['n']+list(pat_plus_pat_count[0]),
-            list('s'+'c'*pat_cnt+"d"),
-            list('m'+' '*pat_cnt+"c")]
-        names = [given.name[-12:] for given in self.corpora.fragments]
-        table_body = [[name]+list(row) for name, row in zip(names, pat_plus_pat_count[1:])]
+            ['n', "g"]+list(pat_plus_pat_count[0]),
+            list('ss'+'c'*pat_cnt+"d"),
+            list('mm'+' '*pat_cnt+"c")]
+        names = [given.name[-17:] for given in self.corpora.fragments]
+        table_body = [[name[-17:-5]]+[name[-5]]+list(row) for name, row in zip(names, pat_plus_pat_count[1:])]
         table_file = table_header + table_body
         for line in table_file:
             print(line)
@@ -406,7 +406,6 @@ class Inscription(Fragment):
             csvwriter = writer(tab_file, delimiter='\t')
             for row in table_file:
                 csvwriter.writerow(row)
-
 
     @staticmethod
     def format_data_for_plotting(survey):

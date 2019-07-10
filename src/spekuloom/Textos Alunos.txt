@@ -1,4 +1,4 @@
-﻿@Gabriel Souza Kligierman
+﻿@0Gabriel Souza Kligierman
 
             A história de avó
 
@@ -12,7 +12,7 @@ No ano seguinte, ele cumpriu a promessa e eles se divertiram muito.
 Eu dedico essa história à avó do Gabriel, ou seja, minha avó.
 
 
-@Guilherme Chaves Manckel
+@0Guilherme Chaves Manckel
 
 
              Aquele que queria viver no mar
@@ -25,7 +25,7 @@ Chorava tanto, insistia que em uma madrugada fez o desejo como de costume e viu 
 
 
 
-@Julia Souza Pires
+@1Julia Souza Pires
 
            A ponte de jasmin
 
@@ -33,7 +33,7 @@ Que bom sentar de frente para o mar, sentir as ondas batendo nas pedras e ouvir 
 Ah, eu ainda nem me apresentei. Meu nome é Jasmin. E hoje eu vou contar um pouco da minha relação com o mar. Eu ainda morava em Cancun. Era um domingo ensolarado quando eu acordei e olhei, pela janela, o mar. Isso me deu uma vontade de ir para a ponte. Quando eu cheguei na ponte, vi a água do mar estranha. Depois eu vi alga contaminada mas eu não sabia o que ra. Eu achava que era uma sereia porque, nos livros, era daquele jeito. Uns instantes depois, eu perguntei quem que estava ali e qual era seu nome e logo uma criatura saiu da água e disse: “Meu nome é Aquamarine”. Eu fiquei um pouco assustada, mas eu já tinha lido livros de uma sereia e não era novidade para mim. Depois de um tempo, eu fiquei conversando com a Aquamarine. Ela era bem legal e animada. A gente virou amiga, na verdade, melhores amigas e todos os dias eu ia lá conversar com ela e levar coisas como espelhos, acessórios e maquiagens. Ela gostava muito. Mas um dia a gente brigou e nunca mais falei com ela.
 
 
-@João Pedro
+@0João Pedro
 
 
 
@@ -47,7 +47,7 @@ Um tempo depois, o garoto começou a chorar e falou:
 Pela parte do mar ele ficou muito chateado e pediu desculpas para o Arthur e os dois viveram felizes para sempre..
 
 
-@Linda Sardenberg K.. Cardona
+@1Linda Sardenberg K.. Cardona
 
       Amizade
 
@@ -65,7 +65,7 @@ Nós deitamos do sofá com seus gatos (Lucy e Zack) e ficamos o resto da tarde v
 Muito obrigada por sempre estar ao meu lado e espero que essa história de lembre da nossa infância
                               Saudade,
                                             Linda
-@Joana Borges Teixeira
+@1Joana Borges Teixeira
 
 
           O mar e eu…
@@ -77,7 +77,7 @@ Agora vamos realmente começar a historia. Agora, Cristiane, que é a tal mulher
 Essa história aconteceu há alguns anos, e ,até hoje, Johny não fala mais sobre isso por causa de Cristiane.
 
 
-@Guilherme Dopper
+@0Guilherme Dopper
 
 
        A vida
@@ -94,7 +94,7 @@ Quando cresci, não tive mais tempo para surfar. Menino, aproveita a vida porque
 
 
 
-@Isadora Sarmet Bruno Martins
+@1Isadora Sarmet Bruno Martins
 
 
        A menina que não entra no mar
@@ -108,7 +108,7 @@ Como estava chato eu comecei a prestara tenção na paisagem. Como sempre estava
 Até que ela foi embora. Fui onde ela estava e notei que havia deixado o seu papel. Estava vazio.
 
 
-@João Gabriel
+@0João Gabriel
 
          Meu querido diário…
 
@@ -117,7 +117,7 @@ Eu sinto que estou falando comigo mesmo, como se tivesse um irmão. Naquele mome
 Lade fora na escola eu leio um livro para eu me incentivar na leitura, na saída eu vou  para a sala da leitura no momento.
 Depois eu volto para casa e leio alguns livros para eu dormir. Bem de manhã, eu tomo meu café e vou para a biblioteca da escola para ler livro e vou meus amigos. Eles amam eu e escrever também e nunca vou deixar de fazer isso.
 
-@Manuela Nascimento P. Rodrigues
+@1Manuela Nascimento P. Rodrigues
 
           Lila e seu lugar no mar
 
@@ -126,7 +126,7 @@ A menina era uma escritora, bom, sabia escrever como uma adulta, e, por isso, to
 - Em uma tarde exuberante, uma menina cujo o nome era Amanda, resolveu desfrutar de uma viagem de balão com sua família. Seus olhos estavam arregalados por tanta grandeza vista de cima. O balão então, começou a se aproximar do mar, onde avistou um lindo pássaro, que se resfriava na brisa do mar, e nas suaves ondas do mar azul. Amanda então, não exitou e tentou furá-lo. O balão começou a virar e cair para o lado, até que de repente, Amanda caiu na água cristalina. Todos os familiares que estavam no balão um pouso de emergência na areia da praia. Até que o mar trouxe uma forte corrente que levou Amanda antes que se afogasse, e a resgatou.
 No fim, quando Lila terminou de contar a história ao mar, ele sorriu para ela, como o príncipe para a princesa cinderela.
 
-@KIM KAKEYA V. CARVALHO
+@0KIM KAKEYA V. CARVALHO
 
 A vida nas grandes cidades e o sentido de coletividade
 	Atravessava a rua sete quando o homem me aborda. Utilizada um terno chique e se introduziu como um banqueiro que tinha uma oferta a me fazer. Mal havia recusando falando entrava atrasado, ele sacou um revolver e disse que aquilo, na verdade, se tratava de um assalto.
@@ -135,7 +135,7 @@ A vida nas grandes cidades e o sentido de coletividade
 	No último berro do homem me enfureci. Como podiam todos à minha volta serem tão às vidas dos outros?  Os acordei então, para a realidade, quando ouviram o som de 3 disparo que nada acordaram e o suspiro final do homem que atirava com uma faca cravada no peito.
 
 
-@GABRIEL
+@0GABRIEL
 
  A vida nas grandes cidades
 	A coletividade é algo bem discutido na atualizada pois, tem tido muitas reclamações sobre a individualidade que vem crescendo muito nos últimos anos com as pessoas parando de pensar no coletivo e pensando somente em si próprio, com o aumento na poluição em geral. Nos acidentes de trânsito, brigas de rua e etc.
@@ -143,13 +143,13 @@ A vida nas grandes cidades e o sentido de coletividade
 	Cara tipo acho isso uma falta de respeito com o próximo ripo não é só você que vai se atrasar para o trabalho quando a uma batida de carro além do que você não vai ser o único afetado por isso tem outras pessoas envolvidas e você tem que pensar nelas também como por exemplo numa briga de torcida organizada não é  só a outra torcida organizada que está lá presente também a crianças, idosos, pessoas com deficiência e, claro, pessoas que não querem participar da briga estão la só para apreciar uma partida de futebol com suas famílias e amigos e não para brigar e causar transtornos em um ambiente que não é pra isso.
 
 
-@MIGUEL MACHADO FERREIRA
+@0MIGUEL MACHADO FERREIRA
 
 A vida nas grandes cidades e o sentido da coletividade
 	A vida na cidade é meio movimentada e cheio de trabalho e também dí  muito difícil para algumas pessoas. A comida fico muito difícil de se conseguir em mercados em feiras, não só pela  conheitas, mais sim o preço. As cidades tem que ser mais aberta para fica mais cultural e também ter mais agricultura e também ser mais ligoada a natureza, as cidades precisam de mais coleita para termos comida facilmente e sem precisamos compra no mercado e temos dinheiro para sustentar nossas famílias. Tem sempre coleitas fora da cidade e mais nos campos. E param na cidade tem muita poluição e pouca natureza e por isso os arredores morem muito rápido e também as plantas e as flores e também as coleitas no preço super alto e como se fossem uma valiosa de mais nos mercados e feiras e não muito legal de fazer com coisa levam trabalho para planta e regar nos campos. Todos devem vender no preço leom e vender como alimento para ficarem mais
 
 
-@Catarina March
+@1Catarina March
 
 “Não podem fazer nada”
 	Cheguei no ponto de ônibus, levantei minha mão e esperei o ônibus pasar para subir. Estava como sempre, indo pro curso de inglês. Quando o ônibus parou no primeiro ponto, uma menina linda subiu cheia de folhas e livros nas mãos. Sentou do lado da janela e logo depois um homem mudou de lugar e sentou ao seu lado. Alguns segundos depois e ficou tentando levantar e pedia ajuda. Mesmo vendo toda aquela situação de abuso e desrepeito, ninguém fez nada. Claramente muitas pessoas não puderam “fazer nada” e muitos apneas ignoram o que havia acontecido, uma garota tinha sido asediada e ninguém “pode fazer nada”. O ônibus parou e ela desceu correndo com seus livros e folhas, e todos no ônibus estavam achando tudo normal. Até agora fico imaginando como ela está se sentindo depois de uma situação tão desagradável, onde ninguém mecheu um dedo para ajudá-la.
@@ -157,7 +157,7 @@ A vida nas grandes cidades e o sentido da coletividade
 	Cabe a nós defender as pessoas, como esta menina que passom por esse tipo de situação.
 
 
-@RAFAEL CUNHA
+@0RAFAEL CUNHA
 
 A  Vida nas Grandes Cidades e o Sentido de Coletividade
 	Hoje em dia a vida nas cidades está cada vez mais peridoso e complicado de morar ou até trabalhar. Temos dois exemplos, um seria a Mariele que foi baleada com vários tidos dentrodo carro que estava, e o outro foi o caso de uma mulher que foi agredida pelo marido depois de vareas discuções e maus entendidos , e quando eles estavam no elevador começo as agressões e gritos, os moradores escutaram mas mesmo assim, não fizeram nada e no final das contas ela morreu. Com isso houve protestos e muitas revoltas.
@@ -165,20 +165,20 @@ A  Vida nas Grandes Cidades e o Sentido de Coletividade
 	Escrevendo esse texto percebi que além dos pontos bons na sociedade, temos vários ruins entre eles assacinatos estupros ladrões golpistas e etc. Esse mundo que você quer par seus filhos Repense no que fez.
 
 
-@DAVI D. COUTINHO
+@0DAVI D. COUTINHO
 
 A moradia nas grandes cidades
 	Na minha opinião morar nas grandes cidades, eu acho não tem muitos problemas sociais, econômicos ou civis, mas isso não significam que não exita crimes nas grandes cidades, em todo lugar existe crime, mesmo que aparente não ter, uma vez inclusive quando estava voltando do trabalho, estava indo pra casa descansar, e foi quando um estranho começou a se aproximar de mim, eu naquele momento comecei a andar mais rápido acelerando o passo até que chegou um momento que eu não aguentava mais correr pois estava cansado. Foi então o momento perfeito para eles me prenderam, pois eles achavam que eu era um criminoso procurado pela policia, então outros agentes da policia de nova York vieram atrás de mim, mas aí a caminho da delegacia, pois eles haviam me prendido, pois não acreditam em mim, me levaram para fazer um interrogatório, para provar se eu era inocente ou nçao. Foi ao que eu voltei para casa. Mas não é só o assalto que é um dos problemas das grandes cidades, mas também das pequenas cidades estava dizendo para o meu filho. Também há outros problemas nas pequenas e grandes cidades, também á outros problemas nas cidades como o sequestro, tráfico de drogas, invasões a banco , lojas, casa, prédios, roubos de celulares, bolsas, carteiras joias etc excessiva quantidade de pessoas nas ruas, obras que se iniciam e que demoram para serem  concluídas. Alguns desses problemas acontecem mais  no Brasil do que em outros lugares do exterior, e foi a partir daquele dia que eu nunca mais sai pelas ruas sozinho, saia sempre acompanhado de alguém seja um amigo, um família, também disse que meu filho nunca mais devia sair de casa sozinho.
 
 
-@MRIA CLARA AFONSO
+@1MARIA CLARA AFONSO
 
 A vida das grandes cidades e o sentido de coletividade
 	A vida na cidade é muito boa mas tem seus defeitos também. Antigamente, quando era criança, eu morava no interior de Goias até meu pai falecer eu e minha mãe nos mudarmos para São Paulo. Eu fazia tanta coisa em Goías, coisas que agora infelismente não posso fazer pois se fizer vou ser julgada de “capial” ou coisa do tipo. Antigamente eu tinha meu próprio quarto, com as minhas coisas, hoje em dia sou obrigada a dividir meu quanto com minha mãe pois o único lugar que conseguimos morar com o pouco dinheiro que temos é em um cortiço que tem aqui na cidade.
 	Assim que chegamos em São Paulo e fomos para o cortiço, e eu vi como era lá, comecei a odiar aquele lugar, mas agora, gosto bastante daqui, pois fiz vários amigos aqui, conheci diversas histórias diferentes e agora sei como é bom você poder dividir um lugar com tantas pessoas diferentes.
 
 
-@MIGUEL MARSICO THOMÉ DA SILVA
+@0MIGUEL MARSICO THOMÉ DA SILVA
 
 Eu na cidade grande
 	Já fazia anos que saí do interior para arrumar emprego na cidade grande , mas do começo do ano tenho observado uma grande frquencia de tiroteios e assaltos aqui no Rio. A primeira vez que eu tive contato com isso foi m 2016, estava no ônibus indo pra o trabalho e 4 homens armados, com armas grandes entraram e roubaram todos os passageiros. O pior é que tinha um policial no ônibus e ele não tinha o que fazer.
@@ -187,14 +187,14 @@ Eu na cidade grande
 	Eu queria saber se umdia a cidade vai estar livre dessa violência. Será que niguém sabe o sentido de coletividade?
 
 
-@JULIA D EMORAES SEVERO
+@1JULIA D EMORAES SEVERO
 
 CIDADANIA
 	Hoje é difícil viver num mundo tão capitalista. As pessoas tem que fazer trabalhos informais por conta disso um exemplo de tudo isso são as favelas, os vendedores de sucatas e outros. São poucas pessoas que conseguem ter uma vida muito confortável é a minoria da população. E também não é qualquer um que tem bom coração para ajudar quem precisa. As vezes parece que esquemos que somos todos seres humano , todos com sentimentos e com uma vida que vale a pena ser vivida. As vezes imagino como é ser um morador de rua, sem não ter nem o que comer. Muitas pessoas passam por situações que eu não faço ideia do que é viver aquilo. Acho que o que falta nas pessoas é se colocar no lugar do outro.
 	Pois, na sociedade de hoje, e antigamente também, parece que não existe fraternidade com a chegada do capitalismo e toda essa ideia de revolução industrial as pessoas tem menos empregos.
 
 
-@YURI A. DE OLIVEIRA.
+@0YURI A. DE OLIVEIRA.
 
 MEU AVÔ
 
@@ -205,7 +205,7 @@ Eu dedico essa historia a meu avô Juan, o melhor avô do mundo!
 
 
 
-@SOPHIA
+@1SOPHIA
 
 A VERDADE
 
@@ -218,7 +218,7 @@ Antes dela responder, forão abordados poruma moça que dissse que eles erão fi
 Conveniados por essa história, agradeceram a mãe adotiva e por foram morar com ela.
 
 
-@VITÓRIA MONDIN
+@1VITÓRIA MONDIN
 
 AMIGAS PARA SEMPRE
 
@@ -228,7 +228,7 @@ E chegou no dia do prova. A Maria Clara estava Nervosa e eu também, mais nós s
 Bem com todas as dificuldades, nós passamos juntas desafios, brincadeira tudo. Isso que é amigade de verdade. Mais no fundamental 2 teve dificuldade, mais teve amigas, mais sempre quem eu vou ficar é a Maria Clara. Minha melhor amiga.
 
 
-@RHYANA NOGUEIRA PINTO
+@1RHYANA NOGUEIRA PINTO
 
 RHYANA E O MAR
 
@@ -240,7 +240,7 @@ Rhyana tenta ser cada vez mais forte, mas fala que é dificio, e é mesmo. Todas
 Já sofrei muito também porque as pessoas ficavam zombando de seu signo, diziam que ela era inssensível, mas uma coisa que ela não é é isso.
 Mas já está enfrentando tudo isso. Por isso admito a Rhyana.
 
-@SOFIA
+@1SOFIA
 
 QUE ANO!
 
@@ -250,7 +250,7 @@ Eu acho que eu precisava ter no início do ano foco, consentração e organizaç
 Daqui a seis anos (2024), você irá ler essa curta história e ver as dicas que eu te dei quando eu estava no sexto ano. Porém, a diaca mais importante eu não falei que é você ser você mesma, escrever a sua própria história, que no final os capítulos iram se arrumar sozinho e o título, automaticamente, irá aparecer.
 Essa história é para a minha irmão (Layla), e todas as crianças que vão passar pela mesma coisa que eu passei. Do fundo do meu coração, eu espero que isso ajude.
 
-@MARIA CLARA DO VALLE
+@1MARIA CLARA DO VALLE
 
 EU E A VITÓRIA
 
@@ -263,7 +263,7 @@ No terceiro ano, eu e você ficávamos juntinhas. Foi aí que eu conheci a Camil
 Ainda no terceiro ano, eu fui à sua casa pela primeira vez. Você me dava presente e eu também.
 
 
-@MARIA CLARA BEZAROLI
+@1MARIA CLARA BEZAROLI
 
 SONHO AO MAR
 
@@ -285,7 +285,7 @@ Um tempo depois:
 - Você poder vir aqui. O avô foi quando ele chegou, o menino e seu pai tiraram o tapume que cobra o barco.
 Uma semana depois, atrás de uma pequena cidade litorânea. Estavam conhecendo os 7 mares.
 
-@MARCY ALMEIDA MENDES
+@1MARCY ALMEIDA MENDES
 
 O NATAL PERFEIRA
 
@@ -296,7 +296,7 @@ O que importa é curtir o natal, pois é um dia lindo e que tem que ser especial
 Dedico está minha história para a minha prima Manuela, da família Almeida. Espero que goste!!!
 
 
-@DAVI GURGEL NASAR DE OLIVEIRA
+@0DAVI GURGEL NASAR DE OLIVEIRA
 
 CARTA PARA OS MEUS PAIS - História Fictícia.
 Niterói, 14 de setembro de 2018.
@@ -308,7 +308,7 @@ Abraços,
 Davi Gurgel.
 
 
-@BÁRBARA
+@1BÁRBARA
 
 HISTÓRIAS PARA O MAR
 
@@ -320,7 +320,7 @@ Quatro anos depois, quando fiz 12 anos, meus pais perceberam que o emprego antig
 Hoje em dia, tenho 18 anos e o mar é meu melhor amigo e melhor conselheiro.
 
 
-@ARTHUR HOENIGKAN MARTINS
+@0ARTHUR HOENIGKAN MARTINS
 
 A VELHA E O FANTASMAS
 Eu dedico esta história ao meu primo Vinícius, um grande fã deste tipo de história.
@@ -338,7 +338,7 @@ Dali para a frente, tudo o que a velha achava difícil o fantasma fazia para ela
 Eles foram grandes amigos.
 
 
-@CATERINA FRANÇA DE ASSUMPÇÃO R. MARINHO
+@1CATERINA FRANÇA DE ASSUMPÇÃO R. MARINHO
 
 QUERIDO VOVÔ
 
@@ -352,7 +352,7 @@ Um dia ela escreveu uma breve carta e depois queimou na fogueira para que a mens
 Assim, Valentina viveu feliz até seu último dia de vida!
 
 
-@MARTIM
+@0MARTIM
 
 A VIDA NAS GRANDES CIDADES E O SENTIDO DA COLETIVIDADE
 
@@ -361,7 +361,7 @@ Esses dias, por exemplo, estava eu caminhando pelas ruas do bairro distraído e 
 No momento que vi, não soube o que fazer. Eu podia comprar um pão ou dar um trocado a ela, mas uma sensação de impotência tomou conta de mim. Ajudar uma pessoa só não adianta de nada se os outros continuarem sem empatia. O importante é a mudança do sistema e da mentalidade para que essas cenas deixam de existir.
 
 
-@ANA LUIZA FONTANA ALVES
+@1ANA LUIZA FONTANA ALVES
 
 A CRISTAL
 
@@ -374,7 +374,7 @@ Depois disso, tudo fez sentido, principalmente o fato de sua avó a levar à pri
 Quando ela se casou e ganhou a sua primeira filha a, Laura, ela veio assim... com um belo cristal porém ele era verde e não azul e isso significada natureza, mas isso já é outra história...
 
 
-@PEDRO ROCCO
+@0PEDRO ROCCO
 
 A VIDA NAS GRANDES CIDADES E O CENTIDO DE COLETIVIDADE
 
@@ -384,7 +384,7 @@ Andando um pouco mais, vejo um homem atravessar a rua após ver um negro do mesm
 Se em apenas uma simples caminhada, presencio situações conflituosas como essas, o que devo esperar da “nossa” sociedade? Vivo entrando em questionamento como esses. Não sei se realmente faço parte da sociedade, ou se a sociedade realmente faz parte de mim, muitas vezes não me identifico com o que é normal para nós. Não consigo me sentir dentro do sentido de coletividade depois de ver o que vi e o que vejo. Meu desejo é poder me sentir verdadeiramente incluído, mas com diferenças de aparências, personalidades, opiniões, mas que ainda assim, possamos nos respeitar e dar um simples “bom dia” e receber um sorriso de volta.
 
 
-@MATHEUS REIS
+@0MATHEUS REIS
 
 A VIDA NAS CIDADES GRANDES E O SENTIDO DA COLETIVIDADE
 
@@ -393,7 +393,7 @@ Durante a noite, uma mobilização de várias pessoas me chamo a atenção. Eles
 Depois acordei em um lugar entranho, onde havia apenas uma cama uma e mera ao lado da mesma. Uma mulher entra e me diz que estou em um centro de tratamento de desabrigados. Assustado não respondo. Alguns meses se passaram e lá eu fui tratado por um time de suporte social a desabrigados junto a outros na mesma situação que a minha. Durante aqueles meses todos o terror e despreso que sentia em relação ao poder conjunto se transformou em respeito adimiração. Ao fim, me afiliei à instituição que me ajudou para ajudar outros como eu. Tudo isso, com o poder do coletivo.
 
 
-@PEDRO GONÇALVES DE MORAIS FERREIRA
+@0PEDRO GONÇALVES DE MORAIS FERREIRA
 
 A VIDA NAS GRANDES CIDADES E O SENTIDO DA COLETIVIDADE
 
@@ -403,7 +403,7 @@ Estou fazendo um documentário com meus amigos e professores, certo. Então vamo
 E saindo de la eu encontrei um trabalhador que era pobre falei com ele, ele era trabalhador de lixo. Sempre conversei com ele, deste que eu era mais novo. Um trabalho que eu sempre respeitei e admiro e esse lixeiro, sabia deste que ele era pequeno sempri vê essas pessoas na rua varrendo serviço da manha até as 16:00 da tarde todos os dias. Eu quero agradecer também essas pessoas por não desistir, porque não é muito legal tipo viver de limpar as coisas dos outros ainda mas na rua.
 
 
-@MARIA CLARA VERÍSISIMO
+@1MARIA CLARA VERÍSISIMO
 MENOS É MAIS
 
 Esse texto é dedicado a meus primos João Pedro e Luiz Felipe, que moram em Portugal. Amo muito vocês!!!
